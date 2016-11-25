@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 431e5f36b587041a1ac25ddaf2fb955d
+timeCreated: 1478611835
+licenseType: Free
+TrueTypeFontImporter:
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Gotham Pro
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 2bf1caba38b144fb3b1e1a6426aaada6, type: 3}
+  - {fileID: 12800000, guid: 16da47adb2c6a42fba5d90e0f6d038dc, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
