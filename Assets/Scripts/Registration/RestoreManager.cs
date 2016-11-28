@@ -25,6 +25,10 @@ public class RestoreManager : MonoBehaviour {
 	void Update () {
 	}
 
+	void OnEnable() {
+		CodeField.text = "";
+	}
+
 	void OnCancelClick()
 	{
 		gameObject.SetActive(false);
@@ -40,10 +44,10 @@ public class RestoreManager : MonoBehaviour {
 	}
 
 	private void parseError(Exception e) {
-		if (e is UniRx.WWWErrorException) {
-			var err = new JSONObject((e as UniRx.WWWErrorException).Text);
-			showValidationError(err.str);
-		} else {
+		var err = new JSONObject((e as UniRx.WWWErrorException).Text);
+		try {
+			showValidationError(err["message"].str);
+		} catch (Exception ee) {
 			showValidationError(e.ToString());
 		}
 	}

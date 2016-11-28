@@ -26,9 +26,15 @@ public class LoginController : MonoBehaviour {
 		ForgetButton.onClick.AddListener (forget);
 	}
 
+	void OnEnable() {
+		EmailField.text = "";
+		PasswordField.text = "";
+	}
+
 	private void setValidation() {
-		validator.AddValidator(() => { return EmailField.text.Contains("@"); }, "Enter valid email.");
-		validator.AddValidator(() => { return PasswordField.text != ""; }, "Enter password");
+		validator.AddValidator (() => { return EmailField.text.Contains("@"); }, "Enter valid email.");
+		validator.AddValidator (() => { return PasswordField.text != ""; }, "Enter password");
+		validator.AddValidator (() => { return PasswordField.text.Length >= 6; }, "Password must be at least 6 characters");
 	}
 
 	private void showValidationError(string message)
@@ -57,16 +63,21 @@ public class LoginController : MonoBehaviour {
 	}
 
 	private void parseError(Exception e) {
-		if (e is UniRx.WWWErrorException) {
-			var err = new JSONObject((e as UniRx.WWWErrorException).Text);
+		if (!(e is WWWErrorException)) {
+			showValidationError (e.ToString ());
+			return;
+		}
+
+		var err = new JSONObject((e as UniRx.WWWErrorException).Text);
+		try {
 			string code = err ["code"].str;
 			if (code != null && code.Equals ("401")) {
 				VerifyDialog.gameObject.SetActive (true);
 			} else {
-				showValidationError (err.str);
+				showValidationError (err["message"].str);
 			}
-		} else {
-			showValidationError(e.ToString());
+		} catch (Exception ee) {
+			showValidationError (e.ToString ());
 		}
 	}
 

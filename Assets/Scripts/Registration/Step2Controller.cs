@@ -79,7 +79,7 @@ public class Step2Controller : MonoBehaviour {
 	private void parseError(Exception e) {
 		if (e is UniRx.WWWErrorException) {
 			var err = new JSONObject((e as UniRx.WWWErrorException).Text);
-			showValidationError(err.ToString());
+			showValidationError(err["message"].str);
 		} else {
 			showValidationError(e.ToString());
 		}

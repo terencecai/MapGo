@@ -40,7 +40,7 @@ public class RegistrationController : MonoBehaviour
 		validator = new Validator(showValidationError);
 		setValidation();
 
-		checkPrefs();
+//		checkPrefs();
 	}
 
 	private void setListeners()
