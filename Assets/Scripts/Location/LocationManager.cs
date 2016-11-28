@@ -23,6 +23,8 @@ public class LocationManager : MonoBehaviour {
         return direction;
     }
 
+	private bool updatesStarted = false;
+
     IEnumerator Start() {
         
         socketManager = GetComponent<SocketManager>();
@@ -33,6 +35,8 @@ public class LocationManager : MonoBehaviour {
             //tileManager = GetComponent<CachedDynamicTileManager>();
         }
 
+		Input.location.Start();
+
         // First, check if user has location service enabled
         if(!Input.location.isEnabledByUser) {
             //gameObject.AddComponent<CachedDynamicTileManager>();
@@ -40,8 +44,7 @@ public class LocationManager : MonoBehaviour {
         }
 
         // Start service before querying location
-        Input.location.Start();
-
+        
         // Wait until service initializes
         int maxWait = 20;
         while(Input.location.status == LocationServiceStatus.Initializing && maxWait > 0) {
@@ -62,26 +65,36 @@ public class LocationManager : MonoBehaviour {
         } else {
             startLocation = Input.location.lastData;
             gameObject.AddComponent<CachedDynamicTileManager>();
-        }       
+        }
+
+		if (!updatesStarted) {
+			InvokeRepeating ("updateLocation", 1, 1);
+			updatesStarted = true;
+		}
     }
 
     public LocationInfo getStartLocation() {
         return startLocation;
     }
 
+	void updateLocation() {
+		if (!Input.location.isEnabledByUser)
+			return;
+
+		prevLocation = location;
+		location = Input.location.lastData;
+
+		if(prevLocation.latitude != location.latitude) {
+			direction = GetPosition(location);
+		}
+		if(Time.time > nextActionTime) {
+			nextActionTime += period;
+			socketManager.SendLocation(location);
+			Debug.Log("locationsend");
+		}
+	}
+
     void Update() {
-        
-        prevLocation = location;       
-        location = Input.location.lastData;
-        
-        if(prevLocation.latitude != location.latitude) {
-            direction = GetPosition(location);
-        }
-        if(Time.time > nextActionTime) {
-            nextActionTime += period;
-            socketManager.SendLocation(location);
-            Debug.Log("locationsend");
-        }
 
     }
 

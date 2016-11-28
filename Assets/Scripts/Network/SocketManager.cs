@@ -10,7 +10,7 @@ using System.Threading;
 public class SocketManager : MonoBehaviour {
 
     private CoPlayerManager coManager;
-    private IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.10.23"), 9000);
+	private IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.10.170"), 9000);
     private UdpClient client = new UdpClient();
     private User user = new User();
     private Thread receiveThread;
@@ -24,7 +24,7 @@ public class SocketManager : MonoBehaviour {
     }
 
     public void SendLocation(LocationInfo location) {
-        user.SetEmail("hardos@inbox.ru");
+		user.SetEmail(PlayerPrefs.GetString("email", ""));
         user.SetLocation(location);
         string json = JsonUtility.ToJson(user);
         byte[] data = Encoding.UTF8.GetBytes(json);

@@ -23,6 +23,10 @@ public class CoPlayerManager : MonoBehaviour {
 	}
 
     public void UpdatePlayers(Users users) {
+
+		if (users == null || users.nearest_players.Length < 1) {
+			return;
+		}
        
 
         if(playersOnScreen.Count == 0) {
