@@ -4,7 +4,7 @@ using System;
 [Serializable]
 public class User{
     [SerializeField]
-    private string email;
+    private string payload;
     [SerializeField]
     private double latitude;
     [SerializeField]
@@ -18,12 +18,17 @@ public class User{
         this.longitude = location.longitude;
     }
 
-    public void SetEmail(string email) {
-        this.email = email;
+    public void SetLocation(Location location) {
+        this.latitude = location.GetLatitude();
+        this.longitude = location.GetLongitude();
     }
 
-    public string GetEmail() {
-        return email;
+    public void SetPayload(string payload) {
+        this.payload = payload;
+    }
+
+    public string GetPayload() {
+        return payload;
     }
 
     public double GetLat() {

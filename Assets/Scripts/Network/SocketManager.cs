@@ -10,41 +10,45 @@ using System.Threading;
 public class SocketManager : MonoBehaviour {
 
     private CoPlayerManager coManager;
-	private IPEndPoint remoteEndPoint = new IPEndPoint(IPAddress.Parse("192.168.10.170"), 9000);
+	// private IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse("192.168.10.170"), 9000);
+    private IPEndPoint serverAddress = new IPEndPoint(IPAddress.Parse("35.156.153.137"), 9000);
     private UdpClient client = new UdpClient();
     private User user = new User();
     private Thread receiveThread;
     private Users users;
 
+	public DataPacket lastDataPacket;
+
     public void Start() {
         coManager = GetComponent<CoPlayerManager>();
-        receiveThread = new Thread(new ThreadStart(OnCoPlayersRecieve));
+        receiveThread = new Thread(new ThreadStart(onDataDiagramReceive));
         receiveThread.IsBackground = true;
         receiveThread.Start();       
     }
 
     public void SendLocation(LocationInfo location) {
-		user.SetEmail(PlayerPrefs.GetString("email", ""));
-        user.SetLocation(location);
+        var token = PlayerPrefs.GetString("token", "");
+		user.SetPayload(token);
+        user.SetLocation(new Location(40.752710, -73.979307));
+        
         string json = JsonUtility.ToJson(user);
         byte[] data = Encoding.UTF8.GetBytes(json);
-        try {
-            client.Send(data, data.Length, remoteEndPoint);
+        try {       
+            client.Send(data, data.Length, serverAddress);
         } catch(Exception err) {
             print(err.ToString());
         }
     }
 
-    private void OnCoPlayersRecieve() {
-        
+    private void onDataDiagramReceive() {
+		IPEndPoint remoteEndPoin = new IPEndPoint(IPAddress.Any, 0);
+		string jsonPacket = "";
         while(true) {
             try {
-                IPEndPoint remoteEndPoin = new IPEndPoint(IPAddress.Any, 0);
                 byte[] data = client.Receive(ref remoteEndPoin);
-                if(data != null) {
-                    string coPlayersJson = Encoding.UTF8.GetString(data);
-                    users = JsonUtility.FromJson<Users>(coPlayersJson);
-                    
+				if(data != null && data.Length > 0) {
+                    jsonPacket = Encoding.UTF8.GetString(data);
+					lastDataPacket = JsonUtility.FromJson<DataPacket>(jsonPacket);
                 }
 
             } catch(Exception err) {

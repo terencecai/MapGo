@@ -12,15 +12,15 @@ namespace MapzenGo.Models {
     public class TileManager : MonoBehaviour {
         
         
-        private float Latitude = 45.020127f;
+        private float Latitude = 40.752710f;
 
-        private float Longitude = 38.973365f;
+        private float Longitude = -73.979307f;
         [SerializeField]
-        public int Range = 6;
+        public int Range = 2;
         [SerializeField]
-        public int Zoom = 18;
+        public int Zoom = 16;
         [SerializeField]
-        public float TileSize = 500;
+        public float TileSize = 200;
 
         protected readonly string _mapzenUrl = "http://tile.mapzen.com/mapzen/vector/v1/{0}/{1}/{2}/{3}.{4}?api_key={5}";
         [SerializeField]

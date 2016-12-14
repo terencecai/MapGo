@@ -118,8 +118,8 @@ public class RegistrationController : MonoBehaviour
 		if (!validator.PerformValidate()) return;
 
 		Profile user = new Profile();
-		user.name     = username;
-		user.birthday = birthday;
+		user.nickName     = username;
+		user.birthDay = birthday;
 		user.gender   = gender;
 
 		saveUserForStep(user);
@@ -128,10 +128,7 @@ public class RegistrationController : MonoBehaviour
 
 	private void saveUserForStep(Profile user)
 	{
-		PlayerPrefs.SetString("profile_name", user.name);
-		PlayerPrefs.SetString("profile_birthday", user.birthday);
-		PlayerPrefs.SetString("profile_gender", user.gender);
-		PlayerPrefs.Save();
+		ProfileRepository.Instance.SaveProfile(user);
 	}
 
 	private void showValidationError(string message)

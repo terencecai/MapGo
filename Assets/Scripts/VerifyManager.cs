@@ -24,9 +24,6 @@ public class VerifyManager : MonoBehaviour {
 		popup = PopUpWindow.GetComponent<PopUp> ();
 	}
 
-	void Update () {
-	}
-
 	void OnCancelClick()
 	{
 		gameObject.SetActive(false);
@@ -34,13 +31,35 @@ public class VerifyManager : MonoBehaviour {
 
     void OnVerifyClick() 
     {
-		Credentials creds = getCreds ();
-		RestClient.verifyEmail (creds, CodeField.text)
+		GameObject.Find("Loading").GetComponent<LoadingController>().showLoading();
+		RestClient.verifyEmail (getCreds (), CodeField.text)
 			.Subscribe(
-				x => SceneManager.LoadScene("CachedDynamicLoader"),
+				x => { parseSuccess(x); },
 				e => { parseError(e); }
 			);
     }
+
+	private void parseSuccess(WWW response) {
+		try {
+			string token = new JSONObject(response.text)["accessToken"].str;
+			PlayerPrefs.SetString ("token", token);
+			RestClient.getProfile(token)
+				.Subscribe(
+					x => parseProfile(x.text),
+					e => showValidationError(e.ToString())
+				); 
+		} catch (Exception e) {
+			GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
+			showValidationError(e.ToString());
+			Debug.Log(e);
+		}
+		
+	}
+
+	private void parseProfile(string profileJson) {
+		ProfileRepository.Instance.SaveProfileJson(profileJson);
+		SceneManager.LoadSceneAsync ("CachedDynamicLoader");
+	}
 
     void OnRequestClick() 
     {
@@ -60,6 +79,7 @@ public class VerifyManager : MonoBehaviour {
 		);
 	}
 	private void parseError(Exception e) {
+		GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
 		if (e is UniRx.WWWErrorException) {
 			var err = new JSONObject((e as UniRx.WWWErrorException).Text);
 			showValidationError(err.str);
@@ -77,6 +97,7 @@ public class VerifyManager : MonoBehaviour {
 
 	private void showCodeMessage(string message)
 	{
+		GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
 		popup.Title = "Verification";
 		popup.Message = message;
 		PopUpWindow.gameObject.SetActive(true);

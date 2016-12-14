@@ -19,6 +19,7 @@ namespace MapzenGo.Models
         private GameObject ground;
 
         private LocationManager _locationManager;
+        private SkillsManager _skillsManager;
 
         public override void Start() {
             base.Start();
@@ -27,6 +28,8 @@ namespace MapzenGo.Models
             _centerCollider = new Rect(Vector2.zero - rect / 2, rect);
             ground = GameObject.Find("Ground");
             _player = GameObject.Find("ThirdPersonController").transform;
+
+            _skillsManager = GetComponent<SkillsManager>();
         }
 
         public void Update() {
@@ -43,6 +46,8 @@ namespace MapzenGo.Models
                 //create new tiles
                 LoadTiles(CenterTms, CenterInMercator);
                 UnloadTiles(CenterTms);
+
+                _skillsManager.UpdateSkills();
             }
         }
 

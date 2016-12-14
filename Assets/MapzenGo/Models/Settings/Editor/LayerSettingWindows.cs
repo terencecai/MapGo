@@ -90,13 +90,11 @@ namespace MapzenGo.Models.Settings.Editor
 
         private SettingsLayers settingElement;
 
-        private int viewIndex = 1;
         private int tab = 0;
         private Vector2 scrollPos = Vector2.zero;
 
         public List<string> UsingType = new List<string>();
 
-        Material currentObject = null;
 
         public static GUIStyle GuiTitleSize(int fontSize, TextAnchor anchor, Color color)
         {

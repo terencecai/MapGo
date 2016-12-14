@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class CoPlayerManager : MonoBehaviour {
 
@@ -16,10 +17,15 @@ public class CoPlayerManager : MonoBehaviour {
 	}  
 
     void Update () {
-        if(Time.time > nextActionTime) {
-            nextActionTime += period;
-            UpdatePlayers(sockManager.GetUsers());
-        }
+
+		//FIXME: Disabled feature for now
+//        if(Time.time > nextActionTime) {
+//            nextActionTime += period;
+//			try { UpdatePlayers(sockManager.GetUsers()); } 
+//			catch (Exception e) {
+//				Debug.Log (e);
+//			}
+//        }
 	}
 
     public void UpdatePlayers(Users users) {
@@ -31,13 +37,13 @@ public class CoPlayerManager : MonoBehaviour {
 
         if(playersOnScreen.Count == 0) {
             foreach(User user in users.nearest_players) {
-                AddNewCoPlayer(user.GetEmail(), user.GetLocation());
+                AddNewCoPlayer(user.GetPayload(), user.GetLocation());
             }
             
         } else {
             Dictionary<string, Location> newUsers = new Dictionary<string, Location>();
             foreach(User user in users.nearest_players) {
-                newUsers.Add(user.GetEmail(), user.GetLocation());
+                newUsers.Add(user.GetPayload(), user.GetLocation());
             }
             foreach(CoPlayer coPlayer in playersOnScreen) {
                 Debug.Log("debug1");

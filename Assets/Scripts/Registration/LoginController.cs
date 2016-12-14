@@ -47,6 +47,7 @@ public class LoginController : MonoBehaviour {
 	private void login() {
 		if (!validator.PerformValidate()) return;
 
+		GameObject.Find("Loading").GetComponent<LoadingController>().showLoading();
 		Credentials creds = new Credentials(EmailField.text, PasswordField.text);
 		PlayerPrefs.SetString ("email", EmailField.text);
 		PlayerPrefs.SetString ("password", PasswordField.text);
@@ -59,10 +60,28 @@ public class LoginController : MonoBehaviour {
 	}
 
 	private void parseSuccess(WWW response) {
-		SceneManager.LoadScene ("CachedDynamicLoader");
+		try {
+			string token = new JSONObject (response.text)["accessToken"].str;
+			PlayerPrefs.SetString ("token", token);
+			RestClient.getProfile(token)
+				.Subscribe(
+					x => parseProfile(x.text),
+					e => parseError(e)
+				);
+		} catch (Exception e) {
+			Debug.Log(response.text);
+			showValidationError (e.ToString ());
+		}
+
+	}
+
+	private void parseProfile(string json) {
+		ProfileRepository.Instance.SaveProfileJson(json);
+		SceneManager.LoadSceneAsync ("CachedDynamicLoader");
 	}
 
 	private void parseError(Exception e) {
+		GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
 		if (!(e is WWWErrorException)) {
 			showValidationError (e.ToString ());
 			return;

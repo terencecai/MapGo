@@ -14,7 +14,7 @@ public class LocationManager : MonoBehaviour {
     private float nextActionTime = 0.0f;
     public float period = 1f;
 
-    private UIManager manager;
+	private UIManager uiManager;
     private CachedDynamicTileManager tileManager;
 
     private SocketManager socketManager;
@@ -24,27 +24,30 @@ public class LocationManager : MonoBehaviour {
     }
 
 	private bool updatesStarted = false;
+	private bool coroutineStarted = false;
 
     IEnumerator Start() {
-        
-        socketManager = GetComponent<SocketManager>();
+		socketManager = GetComponent<SocketManager>();
+        if (coroutineStarted) {
+			yield break;
+		}
         
 
-        if(manager == null) {
-            manager = GetComponent<UIManager>();
+        if(uiManager == null) {
+            uiManager = GetComponent<UIManager>();
             //tileManager = GetComponent<CachedDynamicTileManager>();
         }
 
-		Input.location.Start();
-
         // First, check if user has location service enabled
-        if(!Input.location.isEnabledByUser) {
-            //gameObject.AddComponent<CachedDynamicTileManager>();
-            yield break;
+		while (!Input.location.isEnabledByUser) {
+			uiManager.enableWarning ("GPS is not enabled!");
+			yield return new WaitForSeconds (1);
         }
 
         // Start service before querying location
-        
+		Input.location.Start();
+		uiManager.disableWarning ();
+
         // Wait until service initializes
         int maxWait = 20;
         while(Input.location.status == LocationServiceStatus.Initializing && maxWait > 0) {
@@ -54,6 +57,7 @@ public class LocationManager : MonoBehaviour {
 
         // Service didn't initialize in 20 seconds
         if(maxWait < 1) {
+			uiManager.enableWarning ("GPS is not enabled!");
             print("Timed out");
             yield break;
         }
@@ -61,11 +65,14 @@ public class LocationManager : MonoBehaviour {
         // Connection has failed
         if(Input.location.status == LocationServiceStatus.Failed) {
             print("Unable to determine device location");
+			uiManager.enableWarning ("GPS is not enabled!");
             yield break;
         } else {
             startLocation = Input.location.lastData;
             gameObject.AddComponent<CachedDynamicTileManager>();
         }
+
+		coroutineStarted = false;
 
 		if (!updatesStarted) {
 			InvokeRepeating ("updateLocation", 1, 1);
@@ -78,8 +85,11 @@ public class LocationManager : MonoBehaviour {
     }
 
 	void updateLocation() {
-		if (!Input.location.isEnabledByUser)
+		if (!Input.location.isEnabledByUser) {
+			StartCoroutine (Start());
+			coroutineStarted = true;
 			return;
+		}
 
 		prevLocation = location;
 		location = Input.location.lastData;
@@ -90,7 +100,6 @@ public class LocationManager : MonoBehaviour {
 		if(Time.time > nextActionTime) {
 			nextActionTime += period;
 			socketManager.SendLocation(location);
-			Debug.Log("locationsend");
 		}
 	}
 
@@ -104,21 +113,15 @@ public class LocationManager : MonoBehaviour {
         if(GameObject.Find("Tiles") != null) {
             foreach(Transform child in GameObject.Find("Tiles").transform) {
                 Tile tile = child.GetComponent<Tile>();
-                manager.setGpsValues(tile.ToString());
+                uiManager.enableWarning("" + location.latitude + "--" + location.longitude);
                 if(tile.Rect.Contains(meters)) {
                     var target = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                     target.transform.position = (meters - tile.Rect.Center).ToVector3();
                     target.transform.localScale = Vector3.zero;
                     target.transform.SetParent(tile.transform, false);
-
-
                     targetPos = target.transform.position;
-
                     Destroy(target.gameObject);
-
-
                     break;
-
                 }
 
             }

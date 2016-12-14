@@ -1,8 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
-using System.Collections;
 using UniRx;
-using UnityEngine.SceneManagement;
 using System;
 public class Step2Controller : MonoBehaviour {
 
@@ -49,6 +47,8 @@ public class Step2Controller : MonoBehaviour {
 
 		user.credentials = creds;
 
+		GameObject.Find("Loading").GetComponent<LoadingController>().showLoading();
+
 		RestClient.register(user).Subscribe(
 			resp => parseSuccess(resp),
 			error => parseError(error)
@@ -58,8 +58,8 @@ public class Step2Controller : MonoBehaviour {
 	private Profile loadProfileFromStep()
 	{
 		Profile user = new Profile();
-		user.name = PlayerPrefs.GetString("profile_name", "");
-		user.birthday = PlayerPrefs.GetString("profile_birthday", "");
+		user.nickName = PlayerPrefs.GetString("profile_name", "");
+		user.birthDay = PlayerPrefs.GetString("profile_birthday", "");
 		user.gender = PlayerPrefs.GetString("profile_gender", "");
 		return user;
 	}
@@ -71,16 +71,22 @@ public class Step2Controller : MonoBehaviour {
 	}
 
 	private void parseSuccess(WWW response) {
+		GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
 		PlayerPrefs.SetString ("email", creds.GetEmail ());
 		PlayerPrefs.SetString ("password", creds.GetPassword ());
 		showVerifyDialog();
 	}
 
 	private void parseError(Exception e) {
-		if (e is UniRx.WWWErrorException) {
-			var err = new JSONObject((e as UniRx.WWWErrorException).Text);
-			showValidationError(err["message"].str);
-		} else {
+		GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
+		try {
+			if (e is UniRx.WWWErrorException) {
+				var err = new JSONObject((e as UniRx.WWWErrorException).Text);
+				showValidationError(err["message"].str);
+			} else {
+				showValidationError(e.ToString());
+			}
+		} catch (Exception ee) {
 			showValidationError(e.ToString());
 		}
 	}
