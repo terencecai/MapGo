@@ -19,8 +19,10 @@ public class TavernManager : MonoBehaviour {
 
 	void TavernLongPolling() {
 		var data = socketManager.lastDataPacket;
-		if (data == null || data.nearest_taverns.Count < 1)
+		RestClient.sendDebug("Diagram recieved: " + JsonUtility.ToJson(data));
+		if (data == null || data.nearest_taverns.Count < 1) {
 			return;
+		}
 
 		for (int i = 0; i < data.nearest_taverns.Count; i++)
 		{
@@ -29,30 +31,51 @@ public class TavernManager : MonoBehaviour {
 			}
 
 			var obj = taverns[i];
+			if (obj == null) {
+				obj = Instantiate(Tavern, Tavern.transform.position, Tavern.transform.rotation);
+			}
 			showTavern(data.nearest_taverns[i], obj);
 		}
 	}
 
 	public void showTavern(Tavern tavern, GameObject tavernGO) {
-		if (tavernGO.activeSelf)
-			return;
+		bool shown = false;
+		if (tavernGO.activeSelf) {
+			if (tavernGO.GetComponent<TavernBehaviour>().tavern.name != tavern.name) {
+				tavernGO.SetActive(false);
+			} else {
+				RestClient.sendDebug("Tavern " + tavern.name + " not shown due to activeSelf");
+				return;
+			}
+		}
 
-		Location location = new Location (tavern.latitude, tavern.longitude);
-		var meters = GM.LatLonToMeters(location.GetLatitude(), location.GetLongitude());
+		Tile tile;
+		var meters = GM.LatLonToMeters(tavern.latitude, tavern.longitude);
 		if(GameObject.Find("Tiles") != null) {
 			foreach(Transform child in GameObject.Find("Tiles").transform) {
-				Tile tile = child.GetComponent<Tile>();                
+				tile = child.GetComponent<Tile>();                
 				if(tile.Rect.Contains(meters)) {
 					tavernGO.SetActive (true);
 					tavernGO.transform.SetParent(null);
 					tavernGO.transform.position = (meters - tile.Rect.Center).ToVector3();
 					tavernGO.transform.SetParent(tile.transform, false);
-					tavernGO.GetComponent<TavernBehaviour>().tavern = tavern;                    
+					tavernGO.GetComponent<TavernBehaviour>().tavern = tavern;
+					RestClient.sendDebug("Tavern " + tavern.name + " created\n");  
+					shown = true;                 
 					break;
 				}
 
 			}
 		}
+
+		if (shown) return;
+		
+		var d = "Tavern not shown.\nCoordinates:\n" + tavern.latitude + "\n" + tavern.longitude;
+		d += "\nTavern meters are: " + meters;
+		d += "\nUser coordinates are:";
+		d += "\n" + Input.location.lastData.latitude;
+		d += "\n" + Input.location.lastData.longitude;
+		RestClient.sendDebug(d);
 	}
 
 	public void hideTavern(GameObject t) {

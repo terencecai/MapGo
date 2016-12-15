@@ -112,6 +112,19 @@ namespace MapzenGo.Models
             }
         }
 
+        public void ClearAllTiles() {
+            Destroy(GameObject.Find("Tiles"));
+            // var rem = new List<Vector2d>();
+            // foreach(var key in Tiles.Keys) {
+            //     rem.Add(key);
+            //     Destroy(Tiles[key].gameObject);
+            // }
+
+            // foreach(var v in rem) {
+            //     Tiles.Remove(v);
+            // }
+        }
+
         private Vector2 GetMovementVector() {
             var dif = _player.transform.position.ToVector2xz();
             var tileDif = Vector2.zero;

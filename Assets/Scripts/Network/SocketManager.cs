@@ -29,12 +29,13 @@ public class SocketManager : MonoBehaviour {
     public void SendLocation(LocationInfo location) {
         var token = PlayerPrefs.GetString("token", "");
 		user.SetPayload(token);
-        user.SetLocation(new Location(40.752710, -73.979307));
+        user.SetLocation(location);
         
         string json = JsonUtility.ToJson(user);
         byte[] data = Encoding.UTF8.GetBytes(json);
         try {       
             client.Send(data, data.Length, serverAddress);
+            RestClient.sendDebug("Sended data: " + json);
         } catch(Exception err) {
             print(err.ToString());
         }
@@ -48,7 +49,7 @@ public class SocketManager : MonoBehaviour {
                 byte[] data = client.Receive(ref remoteEndPoin);
 				if(data != null && data.Length > 0) {
                     jsonPacket = Encoding.UTF8.GetString(data);
-					lastDataPacket = JsonUtility.FromJson<DataPacket>(jsonPacket);
+					lastDataPacket = JsonUtility.FromJson<DataPacket>(jsonPacket)   ;
                 }
 
             } catch(Exception err) {
