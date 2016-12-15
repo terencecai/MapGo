@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using UniRx;
 public class SkillBehaviour : MonoBehaviour {
 
 	public Skill Skill;
@@ -49,5 +49,10 @@ public class SkillBehaviour : MonoBehaviour {
 
 	public void pickup() {
 		GetComponent<Rigidbody>().AddForce((getPlayerPosition() - transform.position).normalized * 150, ForceMode.Impulse);
+		RestClient.pickupSkill(PlayerPrefs.GetString("token", ""), Skill.skillboxId.ToString())
+			.Subscribe(
+				x => {},
+				e => Debug.Log(e)
+			);
 	}
 }

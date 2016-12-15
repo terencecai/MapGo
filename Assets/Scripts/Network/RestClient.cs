@@ -86,4 +86,10 @@ public class RestClient : MonoBehaviour {
 	public static IObservable<WWW> getAnswers(string token, string questId) {
 		return ObservableWWW.GetWWW(URL + "/quests/" + questId + "/answers", new Hash() {{ "X-Auth-Token", token }});
 	}
+
+	public static IObservable<WWW> createAnswer(string token, string data, string questId) {
+		var form = new WWWForm();
+		form.AddField("text", data);
+		return ObservableWWW.PostWWW(URL + "/quests/" + questId + "/answers", form, new Hash() {{ "X-Auth-Token", token }});
+	}
 }

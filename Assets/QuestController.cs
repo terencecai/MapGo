@@ -45,6 +45,7 @@ public class QuestController : MonoBehaviour {
 		Loading.SetActive(false);
 		if (!json.IsArray || json.list.Count <= 0) {
 			QuestItem.SetActive(false);
+			ErrorLabel.SetActive(true);
 			return;
 		}
 		if (!QuestItem.activeSelf)
