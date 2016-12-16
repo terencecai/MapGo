@@ -6,7 +6,7 @@ using System.Text;
 using System;
 using System.IO;
 using System.Threading;
-
+using UniRx;
 public class SocketManager : MonoBehaviour {
 
     private CoPlayerManager coManager;
@@ -19,11 +19,16 @@ public class SocketManager : MonoBehaviour {
 
 	public DataPacket lastDataPacket;
 
+    //DEBUG
+    public string sendingError = "";
+    public string recievingError = "";
+    public string jsonPacket = "";
+
     public void Start() {
         coManager = GetComponent<CoPlayerManager>();
         receiveThread = new Thread(new ThreadStart(onDataDiagramReceive));
         receiveThread.IsBackground = true;
-        receiveThread.Start();       
+        // receiveThread.Start();       
     }
 
     public void SendLocation(LocationInfo location) {
@@ -38,12 +43,12 @@ public class SocketManager : MonoBehaviour {
             RestClient.sendDebug("Sended data: " + json);
         } catch(Exception err) {
             print(err.ToString());
+            RestClient.sendDebug("Sendlocation error: " + err.ToString());
         }
     }
 
     private void onDataDiagramReceive() {
 		IPEndPoint remoteEndPoin = new IPEndPoint(IPAddress.Any, 0);
-		string jsonPacket = "";
         while(true) {
             try {
                 byte[] data = client.Receive(ref remoteEndPoin);
@@ -54,6 +59,7 @@ public class SocketManager : MonoBehaviour {
 
             } catch(Exception err) {
                 print(err.ToString());
+                recievingError = err.ToString();
             }
         }
     }

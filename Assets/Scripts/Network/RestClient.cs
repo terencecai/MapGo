@@ -88,13 +88,20 @@ public class RestClient : MonoBehaviour {
 	}
 
 	//------------------------
+	//Taverns
+	//------------------------
+	public static IObservable<WWW> getTaverns(string token, double lat, double lon) {
+		return ObservableWWW.GetWWW(URL + "/nearest_entities?latitude=" + lat + "&longitude=" + lon, new Hash() {{ "X-Auth-Token", token }});
+	}
+
+	//------------------------
 	//Debug
 	//------------------------
 	public static IObservable<WWW> sendDebug(string data) {
 		var form = new WWWForm();
 		form.AddField("data", data);
 		var obs = ObservableWWW.PostWWW(URL + "/debug", form);
-		obs.Subscribe(x => Debug.Log(x), e => Debug.Log(e)); 
+		obs.Subscribe(x => { }, e => Debug.Log(e)); 
 		return obs; 
 	}
 }

@@ -27,8 +27,11 @@ public class LocationManager : MonoBehaviour {
 	private bool coroutineStarted = false;
     private bool startInitMap = false;
 
+    private TavernManager _tavernManager;
+
     IEnumerator Start() {
-		socketManager = GetComponent<SocketManager>();
+        _tavernManager = GetComponent<TavernManager>();
+		// socketManager = GetComponent<SocketManager>();
         if (coroutineStarted) {
 			yield break;
 		}
@@ -76,7 +79,7 @@ public class LocationManager : MonoBehaviour {
 		coroutineStarted = false;
 
 		if (!updatesStarted) {
-			InvokeRepeating ("updateLocation", 1, 1);
+			InvokeRepeating ("updateLocation", 1, 10);
 			updatesStarted = true;
 		}
     }
@@ -101,7 +104,7 @@ public class LocationManager : MonoBehaviour {
 		if(Time.time > nextActionTime) {
 			nextActionTime += period;
             Debug.Log("user coordinates:\n" + location.latitude + "\n" + location.longitude);
-			socketManager.SendLocation(location);
+			_tavernManager.RequestTaverns(location);
 		}
 	}
 

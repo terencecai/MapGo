@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using MapzenGo.Helpers;
 using MapzenGo.Models;
-
+using UniRx;
+using System;
 using System.Collections.Generic;
 public class TavernManager : MonoBehaviour {
 
@@ -13,18 +14,61 @@ public class TavernManager : MonoBehaviour {
 	private SocketManager socketManager;
 
 	void Start () {
-		socketManager = GetComponent<SocketManager> ();
-		InvokeRepeating ("TavernLongPolling", 1, 1);
+		// socketManager = GetComponent<SocketManager> ();
+		// InvokeRepeating ("TavernLongPolling", 1, 1);
+		
+	}
+
+	public void RequestTaverns(LocationInfo location) 
+	{
+		RestClient.getTaverns(PlayerPrefs.GetString("token", ""), location.latitude, location.longitude)
+			.Subscribe(
+				onSuccess,
+				onError
+			);
+	}
+
+	private void onSuccess(WWW response)
+	{
+		Debug.Log("response is : " + response.text);
+		var data = JsonUtility.FromJson<DataPacket>(response.text);
+		if (data != null) {
+			createTaverns(data.nearest_taverns);
+		} else {
+			Debug.Log("Data is null");
+		}
+	}
+
+	private void onError(Exception e)
+	{
+		Debug.Log(e.ToString());
+		RestClient.sendDebug(e.ToString());
 	}
 
 	void TavernLongPolling() {
 		var data = socketManager.lastDataPacket;
 		RestClient.sendDebug("Diagram recieved: " + JsonUtility.ToJson(data));
+		RestClient.sendDebug("Packet: " + socketManager.jsonPacket);
+		if (socketManager.recievingError != "") {
+			RestClient.sendDebug(socketManager.recievingError);
+			socketManager.recievingError = "";
+		}
+
 		if (data == null || data.nearest_taverns.Count < 1) {
 			return;
 		}
 
-		for (int i = 0; i < data.nearest_taverns.Count; i++)
+		createTaverns(data.nearest_taverns);
+	}
+
+	private void createTaverns(List<Tavern> nearest_taverns)
+	{
+		if (nearest_taverns == null) {
+			Debug.Log("nearest_taverns is null");
+			return;
+		}
+
+		for (int i = 0; i < nearest_taverns.Count; i++)
 		{
 			if (taverns.Count <= i) {
 				taverns.Add(Instantiate(Tavern, Tavern.transform.position, Tavern.transform.rotation));
@@ -34,7 +78,7 @@ public class TavernManager : MonoBehaviour {
 			if (obj == null) {
 				obj = Instantiate(Tavern, Tavern.transform.position, Tavern.transform.rotation);
 			}
-			showTavern(data.nearest_taverns[i], obj);
+			showTavern(nearest_taverns[i], obj);
 		}
 	}
 
@@ -68,10 +112,13 @@ public class TavernManager : MonoBehaviour {
 			}
 		}
 
-		if (shown) return;
-		
+		if (!shown) {
+			sendDebugIfNotShown(tavern);
+		}		
+	}
+
+	private void sendDebugIfNotShown(Tavern tavern) {
 		var d = "Tavern not shown.\nCoordinates:\n" + tavern.latitude + "\n" + tavern.longitude;
-		d += "\nTavern meters are: " + meters;
 		d += "\nUser coordinates are:";
 		d += "\n" + Input.location.lastData.latitude;
 		d += "\n" + Input.location.lastData.longitude;
