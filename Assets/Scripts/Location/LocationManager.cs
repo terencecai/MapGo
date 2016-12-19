@@ -25,9 +25,13 @@ public class LocationManager : MonoBehaviour {
 
 	private bool updatesStarted = false;
 	private bool coroutineStarted = false;
+    private bool startInitMap = false;
+
+    private TavernManager _tavernManager;
 
     IEnumerator Start() {
-		socketManager = GetComponent<SocketManager>();
+        _tavernManager = GetComponent<TavernManager>();
+		// socketManager = GetComponent<SocketManager>();
         if (coroutineStarted) {
 			yield break;
 		}
@@ -69,13 +73,13 @@ public class LocationManager : MonoBehaviour {
             yield break;
         } else {
             startLocation = Input.location.lastData;
-            gameObject.AddComponent<CachedDynamicTileManager>();
+            tileManager = gameObject.AddComponent<CachedDynamicTileManager>();
         }
 
 		coroutineStarted = false;
 
 		if (!updatesStarted) {
-			InvokeRepeating ("updateLocation", 1, 1);
+			InvokeRepeating ("updateLocation", 1, 10);
 			updatesStarted = true;
 		}
     }
@@ -99,7 +103,8 @@ public class LocationManager : MonoBehaviour {
 		}
 		if(Time.time > nextActionTime) {
 			nextActionTime += period;
-			socketManager.SendLocation(location);
+            Debug.Log("user coordinates:\n" + location.latitude + "\n" + location.longitude);
+			_tavernManager.RequestTaverns(location);
 		}
 	}
 
@@ -108,12 +113,12 @@ public class LocationManager : MonoBehaviour {
     }
 
     private Vector3 GetPosition(LocationInfo location) {
-        Vector3 targetPos = new Vector3();
+        Vector3 targetPos = Vector3.zero;
         var meters = GM.LatLonToMeters(location.latitude, location.longitude);
         if(GameObject.Find("Tiles") != null) {
             foreach(Transform child in GameObject.Find("Tiles").transform) {
                 Tile tile = child.GetComponent<Tile>();
-                uiManager.enableWarning("" + location.latitude + "--" + location.longitude);
+                uiManager.enableWarning("" + location.latitude + " - " + location.longitude);
                 if(tile.Rect.Contains(meters)) {
                     var target = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                     target.transform.position = (meters - tile.Rect.Center).ToVector3();
@@ -121,10 +126,16 @@ public class LocationManager : MonoBehaviour {
                     target.transform.SetParent(tile.transform, false);
                     targetPos = target.transform.position;
                     Destroy(target.gameObject);
+                    startInitMap = false;
                     break;
                 }
-
             }
+        }
+
+        if (targetPos == Vector3.zero && !startInitMap) {
+            tileManager.ClearAllTiles();
+            tileManager.InitMap();
+            startInitMap = true;
         }
 
         return targetPos;

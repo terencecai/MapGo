@@ -29,26 +29,32 @@ namespace MapzenGo.Models {
                 base.LoadTile(tileTms, tile);
                 return;
             }
-
             var url = string.Format(_mapzenUrl, _mapzenLayers, Zoom, tileTms.x, tileTms.y, _mapzenFormat, _key);
-            var tilePath = Path.Combine(CacheFolderPath, tileTms.x + "_" + tileTms.y);
-            if(File.Exists(tilePath)) {
-                var r = new StreamReader(tilePath, Encoding.Default);
-                var mapData = r.ReadToEnd();
-                ConstructTile(mapData, tile);
-            } else {
-                ObservableWWW.Get(url).Subscribe(
+
+            ObservableWWW.Get(url).Subscribe(
                     success => {
-                        //                        var sr = File.CreateText(tilePath);
-                        //                        sr.Write(success);
-                        //                        sr.Close();
                         ConstructTile(success, tile);
                     },
                     error => {
                         Debug.Log(error);
                         Debug.Log(url);
                     });
-            }
+
+            // var tilePath = Path.Combine(CacheFolderPath, tileTms.x + "_" + tileTms.y);
+            // if(File.Exists(tilePath)) {
+            //     var r = new StreamReader(tilePath, Encoding.Default);
+            //     var mapData = r.ReadToEnd();
+            //     ConstructTile(mapData, tile);
+            // } else {
+            //     ObservableWWW.Get(url).Subscribe(
+            //         success => {
+            //             ConstructTile(success, tile);
+            //         },
+            //         error => {
+            //             Debug.Log(error);
+            //             Debug.Log(url);
+            //         });
+            // }
         }
     }
 }

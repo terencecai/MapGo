@@ -12,9 +12,9 @@ namespace MapzenGo.Models {
     public class TileManager : MonoBehaviour {
         
         
-        private float Latitude = 40.752710f;
+        [SerializeField] public float Latitude = 40.752710f;
 
-        private float Longitude = -73.979307f;
+        [SerializeField] public float Longitude = -73.979307f;
         [SerializeField]
         public int Range = 2;
         [SerializeField]
@@ -58,7 +58,13 @@ namespace MapzenGo.Models {
             InitFactories();
 
             
+            InitMap();
+        }
 
+        public virtual void InitMap() 
+        {
+            Latitude = Input.location.lastData.latitude;
+            Longitude = Input.location.lastData.longitude;
             var v2 = GM.LatLonToMeters(Latitude, Longitude);
             var tile = GM.MetersToTile(v2, Zoom);
             TileHost = new GameObject("Tiles").transform;
@@ -72,8 +78,6 @@ namespace MapzenGo.Models {
             transform.localScale = Vector3.one * (float) (TileSize / rect.Width);
 
             LoadTiles(CenterTms, CenterInMercator);
-
-           
         }
 
         private void InitFactories() {

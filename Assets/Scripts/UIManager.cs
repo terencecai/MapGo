@@ -13,8 +13,10 @@ public class UIManager : MonoBehaviour {
 	private bool enabled = false;
 
     public void enableWarning(string values) {
-		if (enabled)
+		if (enabled) {
+			gps.text = values;
 			return;
+		}
 
 		enabled = true;
 		background.gameObject.SetActive (true);
