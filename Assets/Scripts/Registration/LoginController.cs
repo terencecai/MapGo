@@ -65,7 +65,7 @@ public class LoginController : MonoBehaviour {
 			PlayerPrefs.SetString ("token", token);
 			RestClient.getProfile(token)
 				.Subscribe(
-					x => parseProfile(x.text),
+					x => parseProfile(x),
 					e => parseError(e)
 				);
 		} catch (Exception e) {

@@ -10,4 +10,5 @@ public class Answer {
     public String text;
     public List<Skill> skills;
     public bool isWinner;
+    public long createdAt;
 }

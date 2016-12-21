@@ -1,0 +1,54 @@
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SkillBoxController : MonoBehaviour
+{
+    [SerializeField] public List<Button> Buttons;
+	[SerializeField] public GameObject SkillboxWindow;
+
+    private readonly List<string> Skillboxes = new List<string>() {
+        "Leadership",
+        "Spirituality",
+        "Creativity",
+        "Wisdom",
+        "Empathy",
+        "Communication"
+    };
+
+    private List<Skill> allSkills;
+    void Start()
+    {
+        allSkills = ProfileRepository.Instance.LoadProfile().allSkills;
+        for (int i = 0; i < Buttons.Count; i++)
+        {
+			setOnClick(i);
+        }
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
+
+    private void setOnClick(int index)
+    {
+        try
+        {
+            Buttons[index].onClick.AddListener(() =>
+            {
+                var sk = allSkills.FindAll(s => s.skillboxName == Skillboxes[index]);
+				var temp = SkillboxWindow.GetComponent<SkillboxBehaviour>();
+				temp.Skills = sk;
+				temp.Title = Skillboxes[index];
+				SkillboxWindow.SetActive(true);
+            });
+        }
+        catch (IndexOutOfRangeException e)
+        {
+            Debug.Log(e);
+        }
+    }
+}

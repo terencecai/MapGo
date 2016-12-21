@@ -14,12 +14,24 @@ public class QuestController : MonoBehaviour {
 	[SerializeField] public GameObject Loading;
 	[SerializeField] public GameObject ErrorLabel;
 	[SerializeField] public GameObject DetailedView;
+	[SerializeField] public Button Allbtn;
+	[SerializeField] public Button AddQuest;
+	[SerializeField] public GameObject CreateQuestPanel;
 
 	private List<GameObject> shownQuests = new List<GameObject>();
 
 	void Start () {
-		loadSkills();
+		loadQuests(null);
 		Toggles.ForEach(t => t.onValueChanged.AddListener(onToggle));
+		Allbtn.onClick.AddListener(() => {
+			loadQuests(null);
+			ToggleGroup.allowSwitchOff = true;
+			Toggles.ForEach(t => t.isOn = false);
+			ToggleGroup.allowSwitchOff = false;
+		});
+
+		AddQuest.onClick.AddListener(() => CreateQuestPanel.SetActive(true));
+
 	}
 
 	private void onToggle(bool value) 
@@ -28,9 +40,11 @@ public class QuestController : MonoBehaviour {
 			return;
 		var toggle = ToggleGroup.ActiveToggles().FirstOrDefault();
 		if (toggle.Equals(Toggles[0])) {
-			clearQuests();
+			loadQuests("pinned");
 		} else if (toggle.Equals(Toggles[1])) {
-			loadSkills();
+			loadQuests("");
+		} else if(toggle.Equals(Toggles[2])) {
+			loadQuests("completed");
 		}
 	}
 
@@ -89,11 +103,11 @@ public class QuestController : MonoBehaviour {
 		return shownQuests[index];
 	}
 
-	private void loadSkills() {
+	private void loadQuests(string type) {
 		ErrorLabel.SetActive(false);
 		clearQuests();
 		Loading.SetActive(true);
-		RestClient.getQuests(PlayerPrefs.GetString("token", ""))
+		RestClient.getQuests(PlayerPrefs.GetString("token", ""), type)
 			.Subscribe(
 				x => parseQuests(new JSONObject(x.text)),
 				e => parseError(e)

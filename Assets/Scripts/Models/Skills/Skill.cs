@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Collections.Generic;
 
 /*
 	"skillId": 4,
@@ -18,6 +18,8 @@ public class Skill {
 	public string skillName = "";
 	public string valueName = "";
 	public string skillboxName = "";
+	public int level = 0;
+	public float maxLevel = 100;
 
 	// override object.Equals
 	public override bool Equals (object obj)
@@ -26,10 +28,14 @@ public class Skill {
 		{
 			return false;
 		}
-		
-		// TODO: write your implementation of Equals() here
+
 		return (obj as Skill).skillId == this.skillId;
 	}
 	
 
+}
+
+public class SkillHolder
+{
+	public List<Skill> skills;
 }

@@ -17,5 +17,8 @@ public class Profile
 	public Credentials credentials;
 	public Value chosenValue;
 	public Value[] values;
+	public List<Skill> skills;
+
+	public List<Skill> allSkills;
 
 }

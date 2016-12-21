@@ -78,7 +78,7 @@ public class FacebookController : MonoBehaviour {
 			PlayerPrefs.SetString ("token", token);
 			RestClient.getProfile(token)
 				.Subscribe(
-					x => parseProfile(x.text),
+					x => parseProfile(x),
 					e => showValidationError(e.ToString())
 				);
 		} catch (Exception e) {

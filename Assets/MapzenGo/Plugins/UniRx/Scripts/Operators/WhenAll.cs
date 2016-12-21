@@ -8,8 +8,7 @@ namespace UniRx.Operators
         readonly IObservable<T>[] sources;
         readonly IEnumerable<IObservable<T>> sourcesEnumerable;
 
-        public WhenAllObservable(IObservable<T>[] sources)
-            : base(false)
+        public WhenAllObservable(IObservable<T>[] sources) : base(false)
         {
             this.sources = sources;
         }

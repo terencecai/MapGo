@@ -34,11 +34,15 @@ public class CreateAnswer : MonoBehaviour {
 		Debug.Log(json);
 	}
 
+	void OnDisable() {
+		AnswerField.text = "";
+	}
+
 	void parseError(Exception e) {
 		string message;
 		try {
 			message = new JSONObject(e.ToString())["message"].str;
-		} catch (Exception je) {
+		} catch (Exception) {
 			message = e.ToString();
 		}
 		showPopup("Error", message);
