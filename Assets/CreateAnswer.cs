@@ -12,6 +12,7 @@ public class CreateAnswer : MonoBehaviour {
 	private PopUp popup;
 
 	public string questId = "";
+	public Action<string> callback;
 	void Start () {
 		OK.onClick.AddListener(() => SendAnswer(questId));
 		Cancel.onClick.AddListener(() => gameObject.SetActive(false));
@@ -21,7 +22,10 @@ public class CreateAnswer : MonoBehaviour {
 
 	void SendAnswer(string questId) {
 		var answer = AnswerField.text;
-		if (answer == "") return;
+		if (answer == "") {
+			showPopup("Error", "Please, type the answer.");
+			return;
+		}
 		var token = PlayerPrefs.GetString("token", "");
 		RestClient.createAnswer(token, answer, questId)
 			.Subscribe(
@@ -31,7 +35,8 @@ public class CreateAnswer : MonoBehaviour {
 	}
 
 	void parseResponce(string json) {
-		Debug.Log(json);
+		callback(questId);
+		gameObject.SetActive(false);
 	}
 
 	void OnDisable() {

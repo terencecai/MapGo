@@ -15,6 +15,7 @@ public class AnswersManager : MonoBehaviour {
 	private List<GameObject> visibleAnswers = new List<GameObject>();
 
 	public String QuestId;
+	public Quest Quest;
 	void Start () {
 		if (QuestId == null || QuestId == "") {
 			ErrorLabel.SetActive(true);
@@ -98,7 +99,7 @@ public class AnswersManager : MonoBehaviour {
 	}
 
 	void bind(Answer answer, AnswersItemManager item) {
-		item.bind(answer);
+		item.bind(answer, Quest, loadAnswers);
 	}
 
 	void clear() {
@@ -108,6 +109,7 @@ public class AnswersManager : MonoBehaviour {
 
 	void AddAnswer() {
 		AnswerDialog.GetComponent<CreateAnswer>().questId = QuestId;
+		AnswerDialog.GetComponent<CreateAnswer>().callback = loadAnswers;
 		AnswerDialog.SetActive(true);
 	}
 }

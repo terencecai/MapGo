@@ -9,6 +9,6 @@ public class Answer {
     public String questDescription;
     public String text;
     public List<Skill> skills;
-    public bool isWinner;
+    public bool winner;
     public long createdAt;
 }

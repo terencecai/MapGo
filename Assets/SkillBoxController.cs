@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class SkillBoxController : MonoBehaviour
 {
     [SerializeField] public List<Button> Buttons;
-	[SerializeField] public GameObject SkillboxWindow;
+    [SerializeField] public GameObject SkillboxWindow;
 
     private readonly List<string> Skillboxes = new List<string>() {
         "Leadership",
@@ -23,7 +23,7 @@ public class SkillBoxController : MonoBehaviour
         allSkills = ProfileRepository.Instance.LoadProfile().allSkills;
         for (int i = 0; i < Buttons.Count; i++)
         {
-			setOnClick(i);
+            setOnClick(i);
         }
     }
 
@@ -35,20 +35,22 @@ public class SkillBoxController : MonoBehaviour
 
     private void setOnClick(int index)
     {
-        try
+
+        Buttons[index].onClick.AddListener(() =>
         {
-            Buttons[index].onClick.AddListener(() =>
+            try
             {
                 var sk = allSkills.FindAll(s => s.skillboxName == Skillboxes[index]);
-				var temp = SkillboxWindow.GetComponent<SkillboxBehaviour>();
-				temp.Skills = sk;
-				temp.Title = Skillboxes[index];
-				SkillboxWindow.SetActive(true);
-            });
-        }
-        catch (IndexOutOfRangeException e)
-        {
-            Debug.Log(e);
-        }
+                var temp = SkillboxWindow.GetComponent<SkillboxBehaviour>();
+                temp.Skills = sk;
+                temp.Title = Skillboxes[index];
+                SkillboxWindow.SetActive(true);
+            }
+            catch (IndexOutOfRangeException e)
+            {
+                Debug.Log(e);
+            }
+        });
     }
+
 }

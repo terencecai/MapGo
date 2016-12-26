@@ -19,7 +19,10 @@ public class Hashmap
 
     public string Get(string KEY)
     {
-        return _data[KEY];
+        if (_data.ContainsKey(KEY))
+            return _data[KEY];
+        else
+            return null;
     }
 
     public QuestDTO generateDTO()

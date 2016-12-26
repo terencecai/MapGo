@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UniRx;
 
 public class DetailedController : MonoBehaviour {
 
@@ -20,6 +21,14 @@ public class DetailedController : MonoBehaviour {
 	void Start() {
 		answers.onClick.AddListener(OnAnswersClick);
 		back.onClick.AddListener(() => gameObject.SetActive(false));
+		pinQuest.onClick.AddListener(() =>
+		{
+			RestClient.pinQuest(PlayerPrefs.GetString("token", ""), _quest.id)
+				.Subscribe(
+					x => pinQuest.gameObject.SetActive(false),
+					e => { Debug.Log(e); pinQuest.gameObject.SetActive(false); }
+				);
+		});
 	}
 
 	public void AttachQuestAndShow(Quest quest) {
@@ -32,8 +41,14 @@ public class DetailedController : MonoBehaviour {
 		gameObject.SetActive(true);
 	}
 
+	void OnDisable()
+	{
+		pinQuest.gameObject.SetActive(true);
+	}
+
 	void OnAnswersClick() {
 		AnswersPanel.GetComponent<AnswersManager>().QuestId = _quest.id;
+		AnswersPanel.GetComponent<AnswersManager>().Quest = _quest;
 		AnswersPanel.SetActive(true);
 	}
 }

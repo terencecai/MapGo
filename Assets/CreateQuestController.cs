@@ -50,6 +50,12 @@ public class CreateQuestController : MonoBehaviour
 				return;
 			}
 
+            if (QuestData.Get("skill1_id") == null || QuestData.Get("skill2_id") == null)
+            {
+                showError("Choose 2 skills");
+                return;
+            }
+
 			QuestData.Add("minAge", Age.text);
 			RestClient.createQuest(PlayerPrefs.GetString("token", ""), QuestData)
 				.Subscribe(

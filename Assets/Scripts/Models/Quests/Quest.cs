@@ -12,6 +12,7 @@ public class Quest {
     public int minAge;
     public Value value;
     public string title;
+    public Answer winner;
 
     [Serializable]
     public class Creator {

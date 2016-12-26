@@ -2,6 +2,8 @@
 using UniRx;
 using Hash = System.Collections.Generic.Dictionary<string, string>;
 using System.Text;
+using System;
+using System.Linq;
 public class RestClient : MonoBehaviour
 {
 
@@ -24,8 +26,28 @@ public class RestClient : MonoBehaviour
         form.AddField("nickName", user.nickName);
         form.AddField("secondName", "vasyatest");
         form.AddField("gender", user.gender.ToUpper());
+        form.AddField("birthDay", user.getBirthdayTime().ToString());
 
         return ObservableWWW.PostWWW(URL + "/registration", form);
+    }
+
+    public static IObservable<WWW> updateProfile(string token, Profile user)
+    {
+        var s = "{";
+        s += "\"nickName\": \"" + user.nickName + "\", ";
+        s += "\"gender\": \"" + user.gender.ToUpper() + "\", ";
+        s += "\"birthDay\": " + Convert.ToInt64(user.getBirthdayTime()).ToString() + ", ";
+        s += "\"chosenValueId\": " + user.chosenValue.valueId + "}";
+
+        var data = Encoding.UTF8.GetBytes(s);
+        // var form = new Hash();
+        // form.Add("nickName", user.nickName);
+        // form.Add("gender", user.gender.ToUpper());
+        // form.Add("birthDay", Convert.ToInt64(user.getBirthdayTime()).ToString());
+        // form.Add("chosenValueId", user.chosenValue.valueId);
+
+        return ObservableWWW.PostWWW(URL + "/profile", data, new Hash() { { "X-Auth-Token", token } ,
+                                               { "Content-Type", "application/json" }});
     }
 
     public static IObservable<WWW> sendFBToken(string token)
@@ -124,6 +146,18 @@ public class RestClient : MonoBehaviour
         var form = new WWWForm();
         form.AddField("text", data);
         return ObservableWWW.PostWWW(URL + "/quests/" + questId + "/answers", form, new Hash() { { "X-Auth-Token", token } });
+    }
+
+    public static IObservable<string> approveAnswer(string token, string questId, string answerId)
+    {
+        return ObservableWWW.Post(URL + "/quests/" + questId + "/answers/" + answerId, Encoding.UTF8.GetBytes("123"), 
+        new Hash() { { "X-Auth-Token", token } });
+    }
+
+    public static IObservable<string> pinQuest(string token, string questId)
+    {
+        return ObservableWWW.Post(URL + "/quests/me/" + questId, Encoding.UTF8.GetBytes("123"), 
+        new Hash() { { "X-Auth-Token", token } });
     }
     //------------------------
     //Taverns

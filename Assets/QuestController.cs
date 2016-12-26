@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class QuestController : MonoBehaviour {
 
@@ -17,6 +18,7 @@ public class QuestController : MonoBehaviour {
 	[SerializeField] public Button Allbtn;
 	[SerializeField] public Button AddQuest;
 	[SerializeField] public GameObject CreateQuestPanel;
+	[SerializeField] public Button BackBtn;
 
 	private List<GameObject> shownQuests = new List<GameObject>();
 
@@ -31,7 +33,7 @@ public class QuestController : MonoBehaviour {
 		});
 
 		AddQuest.onClick.AddListener(() => CreateQuestPanel.SetActive(true));
-
+		BackBtn.onClick.AddListener(() => SceneManager.LoadSceneAsync("CachedDynamicLoader"));
 	}
 
 	private void onToggle(bool value) 
