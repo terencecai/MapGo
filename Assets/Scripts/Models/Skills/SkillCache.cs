@@ -27,6 +27,22 @@ public class SkillCache
         PlayerPrefs.Save();
     }
 
+    public void Save(SkillCacheContainer container)
+    {
+        PlayerPrefs.SetString(CACHE_KEY, JsonUtility.ToJson(container));
+        PlayerPrefs.Save();
+    }
+
+    public void RemoveItem(Skill skill)
+    {
+        var cache = GetCache();
+        if (cache.skills.Count <= 0)
+            return;
+            
+        cache.skills.Remove(skill);
+        Save(cache);
+    }
+
     public SkillCacheContainer GetCache()
     {
         return JsonUtility.FromJson<SkillCacheContainer>(PlayerPrefs.GetString(CACHE_KEY, ""));

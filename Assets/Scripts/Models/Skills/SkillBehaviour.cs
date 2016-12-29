@@ -51,8 +51,14 @@ public class SkillBehaviour : MonoBehaviour {
 		GetComponent<Rigidbody>().AddForce((getPlayerPosition() - transform.position).normalized * 150, ForceMode.Impulse);
 		RestClient.pickupSkill(PlayerPrefs.GetString("token", ""), Skill.skillId.ToString())
 			.Subscribe(
-				x => { ProfileRepository.Instance.LoadProfile().skills.Add(Skill); },
+				x => { afterPickup(); },
 				e => Debug.Log(e)
 			);
+	}
+
+	private void afterPickup()
+	{
+		ProfileRepository.Instance.LoadProfile().skills.Add(Skill);
+		SkillCache.Instance.RemoveItem(Skill);
 	}
 }
