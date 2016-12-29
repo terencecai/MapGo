@@ -12,6 +12,7 @@ public class AnswersManager : MonoBehaviour {
 	[SerializeField] public Button Back; 
 	[SerializeField] public GameObject AnswerDialog;
 	[SerializeField] public Button Add;
+	[SerializeField] public ScrollRect scroll;
 	private List<GameObject> visibleAnswers = new List<GameObject>();
 
 	public String QuestId;
@@ -36,6 +37,8 @@ public class AnswersManager : MonoBehaviour {
 	}
 
 	void parseResponse(string answersJson) {
+		var winned = answersJson.Contains("\"winnder\": true");
+		scroll.verticalNormalizedPosition = 0.5f;
 		Loading.SetActive(false);
 		var json = new JSONObject(answersJson);
 
@@ -54,14 +57,14 @@ public class AnswersManager : MonoBehaviour {
 		for (int i = 0; i < json.list.Count; i++) {
 			answer = JsonUtility.FromJson<Answer>(json.list[i].print());
 			if (i == 0) { 
-				bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>());
+				bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>(), winned);
 				continue;
 			}
 
 			item = getAnswerIfExist(i);
 			if (item != null) {
 				item.SetActive(true);
-				bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>());
+				bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>(), winned);
 				continue;	
 			}
 
@@ -69,7 +72,7 @@ public class AnswersManager : MonoBehaviour {
 			item.transform.parent = Content.transform;
 			item.transform.localScale = scaleVector;
 			visibleAnswers.Add(item);
-			bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>());
+			bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>(), winned);
 		}
 	}
 
@@ -98,8 +101,8 @@ public class AnswersManager : MonoBehaviour {
 			);
 	}
 
-	void bind(Answer answer, AnswersItemManager item) {
-		item.bind(answer, Quest, loadAnswers);
+	void bind(Answer answer, AnswersItemManager item, bool winned) {
+		item.bind(answer, Quest, loadAnswers, winned);
 	}
 
 	void clear() {

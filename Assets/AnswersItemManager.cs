@@ -16,7 +16,7 @@ public class AnswersItemManager : MonoBehaviour
 
 	private Action<string> callback;
 
-    public void bind(Answer item, Quest quest, Action<string> callback)
+    public void bind(Answer item, Quest quest, Action<string> callback, bool winned)
     {
         _answer = item;
 		_quest = quest;
@@ -26,7 +26,7 @@ public class AnswersItemManager : MonoBehaviour
         date = date.AddSeconds(item.createdAt / 1000);
         Date.text = date.ToString("dd MMM HH:mm");
 		var name = ProfileRepository.Instance.LoadProfile().nickName;
-		var questWinned = _quest.winner != null && _quest.winner.id != 0;
+        var questWinned = (_quest.winner != null && _quest.winner.id != 0) || winned;
         if (item.profile.nickName == name ||questWinned || _quest.creator.nickName != name)
         {
             AcceptBtn.gameObject.SetActive(false);

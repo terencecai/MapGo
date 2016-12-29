@@ -38,7 +38,6 @@ public class SkillCache
         var cache = GetCache();
         if (cache.skills.Count <= 0)
             return;
-            
         cache.skills.Remove(skill);
         Save(cache);
     }
