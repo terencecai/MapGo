@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UniRx;
-using UnityEngine.SceneManagement;
 
 
 public class ProfileController : MonoBehaviour
@@ -37,7 +36,7 @@ public class ProfileController : MonoBehaviour
         initValidators();
         fill();
         Save.onClick.AddListener(send);
-        Back.onClick.AddListener(() => SceneManager.LoadScene("CachedDynamicLoader"));
+        Back.onClick.AddListener(() => gameObject.SetActive(false));
     }
 
     private void fill()
@@ -121,7 +120,7 @@ public class ProfileController : MonoBehaviour
 
         RestClient.updateProfile(PlayerPrefs.GetString("token", ""), p)
             .Subscribe(
-                x => SceneManager.LoadScene("CachedDynamicLoader"),
+                x => gameObject.SetActive(false),
                 e => showError(e.ToString())
             );
     }

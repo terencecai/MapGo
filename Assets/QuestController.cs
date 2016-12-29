@@ -58,7 +58,9 @@ public class QuestController : MonoBehaviour {
 
 	private void parseQuests(JSONObject json) 
 	{
+		GameObject.Find("ScrollView").GetComponent<ScrollRect>().verticalNormalizedPosition = 0.5f;
 		Loading.SetActive(false);
+		
 		if (!json.IsArray || json.list.Count <= 0) {
 			QuestItem.SetActive(false);
 			ErrorLabel.SetActive(true);

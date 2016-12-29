@@ -18,9 +18,14 @@ public class ProfileBehaviour : MonoBehaviour
     [SerializeField] public Image CompassionBar;
     [SerializeField] public Image IntelligenceBar;
 
+    [SerializeField] public GameObject EditPanel;
+
 
     void Start()
     {
+        if (EditPanel.activeInHierarchy) {
+            EditPanel.SetActive(false);
+        }
         var i = 0;
         ProfileAvatar.onClick.AddListener(() =>
         {
@@ -34,8 +39,8 @@ public class ProfileBehaviour : MonoBehaviour
                 SceneManager.LoadSceneAsync("TestScene");
             }
         });
-        EditButton.onClick.AddListener(() => SceneManager.LoadScene("ProfileEdit", LoadSceneMode.Additive));
-        BackButton.onClick.AddListener(() => gameObject.SetActive(false));        
+        EditButton.onClick.AddListener(() => EditPanel.SetActive(true));
+        BackButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("CachedDynamicLoader"));        
     }
 
     void OnEnable()

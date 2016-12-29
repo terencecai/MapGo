@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+
 public class MenuController : MonoBehaviour {
 
 	[SerializeField] public Button ProfileButton;
-	[SerializeField] public GameObject ProfilePanel;
 	void Start () {
-		ProfileButton.onClick.AddListener(() => ProfilePanel.SetActive(true));
+		ProfileButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("ProfileScene"));
 	}
 	
 	// Update is called once per frame

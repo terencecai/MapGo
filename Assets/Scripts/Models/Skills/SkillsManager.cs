@@ -40,11 +40,16 @@ public class SkillsManager : MonoBehaviour
 
     public void UpdateSkills()
     {
-        RestClient.requestSkills(PlayerPrefs.GetString("token", "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJvbGVnc2hlbGlha2luQGdtYWlsLmNvbSJ9.HF0-sjvvFuUtkVsTt5srdqtKYZpRfNwWSA6xBi0Cinj9LvIbiqOArhFm39y5gCNAPC3PFpRo8qqlW-Zw5rWDlQ"))
+        RestClient.requestSkills(PlayerPrefs.GetString("token", ""))
             .Subscribe(
                 success => { throwSkills(success.text); },
                 failure => { Debug.Log(failure); }
             );
+    }
+
+    private void calculateSkills(string skillsJson)
+    {
+        
     }
 
     private void throwSkills(string skillsJson)

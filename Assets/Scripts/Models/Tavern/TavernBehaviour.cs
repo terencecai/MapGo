@@ -19,6 +19,8 @@ public class TavernBehaviour : MonoBehaviour {
 		if (checkObject()) 
 			return;
 		showTavernDialog();
+		var distance = Vector3.Distance(transform.position, GameObject.Find("ThirdPersonController").transform.position);
+		Debug.Log(distance);
 	}
 
 	private bool checkObject() 
