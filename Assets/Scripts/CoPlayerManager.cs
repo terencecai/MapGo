@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System;
-
 public class CoPlayerManager : MonoBehaviour {
 
     private ArrayList playersOnScreen = new ArrayList();

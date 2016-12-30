@@ -18,7 +18,6 @@ public class QuestItemController : MonoBehaviour {
 
 	void Start () {
 		PressedBack.onClick.AddListener(() => {
-
 			showDetailed(_quest);
 		});
 	}

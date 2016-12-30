@@ -3,6 +3,7 @@ using UnityEngine.SceneManagement;
 using System;
 using System.Collections.Generic;
 using UniRx;
+using Fabric;
 
 public class ApplicationLoadController : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class ApplicationLoadController : MonoBehaviour
 
     void Start()
     {
+        Fabric.Runtime.Fabric.Initialize();
         GameObject.Find("Loading").GetComponent<LoadingController>().showLoading();
         manager = GetComponent<ScreenManager>();
         checkExisting();

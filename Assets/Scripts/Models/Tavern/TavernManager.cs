@@ -4,6 +4,7 @@ using MapzenGo.Models;
 using UniRx;
 using System;
 using System.Collections.Generic;
+
 public class TavernManager : MonoBehaviour {
 
 	[SerializeField] public GameObject Tavern;

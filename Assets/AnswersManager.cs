@@ -37,7 +37,7 @@ public class AnswersManager : MonoBehaviour {
 	}
 
 	void parseResponse(string answersJson) {
-		var winned = answersJson.Contains("\"winnder\": true");
+		var winned = answersJson.Contains("\"winnder\":true");
 		scroll.verticalNormalizedPosition = 0.5f;
 		Loading.SetActive(false);
 		var json = new JSONObject(answersJson);

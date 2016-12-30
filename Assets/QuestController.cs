@@ -56,7 +56,7 @@ public class QuestController : MonoBehaviour {
 		QuestItem.SetActive(false);
 	}
 
-	private void parseQuests(JSONObject json) 
+	private void parseQuests(JSONObject json, string type) 
 	{
 		GameObject.Find("ScrollView").GetComponent<ScrollRect>().verticalNormalizedPosition = 0.5f;
 		Loading.SetActive(false);
@@ -75,6 +75,10 @@ public class QuestController : MonoBehaviour {
 		
 		for (int i = 0; i < json.list.Count; i++) {
 			quest = JsonUtility.FromJson<Quest>(json.list[i].print());
+			if (type == "pinned") 
+			{
+				quest.pinnedByMe = true;
+			}
 			if (i == 0) { 
 				fillQuestWithData(quest, QuestItem.GetComponent<QuestItemController>());
 				continue;
@@ -113,7 +117,7 @@ public class QuestController : MonoBehaviour {
 		Loading.SetActive(true);
 		RestClient.getQuests(PlayerPrefs.GetString("token", ""), type)
 			.Subscribe(
-				x => parseQuests(new JSONObject(x.text)),
+				x => parseQuests(new JSONObject(x.text), type),
 				e => parseError(e)
 			);
 	}

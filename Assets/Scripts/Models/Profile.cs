@@ -16,7 +16,7 @@ public class Profile
 	public string gender;
 	public Credentials credentials;
 	public Value chosenValue;
-	public Value[] values;
+	public List<Value> values;
 	public List<Skill> skills;
 
 	public List<Skill> allSkills;

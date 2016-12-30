@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using UnityEngine;
 using UniRx;
 using MapzenGo.Helpers;
+using System;
 
 public class SkillsManager : MonoBehaviour
 {
-    private static int MAX_SKILL_POOL_SIZE = 10;
+    private static int MAX_SKILL_POOL_SIZE = 2;
     [SerializeField] public GameObject skillPrefab;
     [SerializeField] public GameObject SkillDialog;
 
     private List<Skill> activeSkills = new List<Skill>();
     private List<GameObject> skillsPool = new List<GameObject>(MAX_SKILL_POOL_SIZE);
     private GameObject player;
+
+    private UIManager UIManager;
+
     void Start()
     {
+        UIManager = GetComponent<UIManager>();
         player = GameObject.Find("ThirdPersonController");
 
         if (skillsPool.Count > 0) skillsPool.Clear();
@@ -32,17 +37,20 @@ public class SkillsManager : MonoBehaviour
         activeSkills = new List<Skill>();
         foreach (var p in skillsPool)
         {
-            p.SetActive(false);
+            if (p != null)
+                p.SetActive(false);
         }
     }
 
     private IEnumerator waitForCoords()
     {
-        while(!(Input.location.lastData.latitude > 0)) {
+        while (!(Input.location.lastData.latitude > 0))
+        {
             yield return new WaitForSeconds(1);
         }
 
         UpdateSkills();
+        InvokeRepeating("skillsUpdates", 10, 5);
         yield break;
     }
 
@@ -63,35 +71,78 @@ public class SkillsManager : MonoBehaviour
         if (lastLatitude == "" || lastLongitude == "")
         {
             saveToCacheAndThrow(skillsJson);
-        } 
-        else 
+        }
+        else
         {
-            checkLastDistanceAndThrow(double.Parse(lastLatitude), double.Parse(lastLongitude), skillsJson);
+            checkLastDistanceAndThrow(skillsJson);
+        }
+    }
+
+    private void OnDisable()
+    {
+        PlayerPrefs.SetString("last_lat", "");
+        PlayerPrefs.SetString("last_lon", "");
+    }
+
+    private void skillsUpdates()
+    {
+        var dist = lastDistance();
+        UIManager.enableWarning("distance: " + dist.ToString());
+        if (dist > 50)
+        {
+            RestClient.requestSkills(PlayerPrefs.GetString("token", ""))
+            .Subscribe(
+                success => { saveToCacheAndThrow(success.text); },
+                failure => { Debug.Log(failure); }
+            );
         }
     }
 
     private void saveToCacheAndThrow(string skillsJson)
     {
-        PlayerPrefs.SetString("last_lat", Input.location.lastData.latitude.ToString());
-        PlayerPrefs.SetString("last_lon", Input.location.lastData.longitude.ToString());
+        saveLastLocation();
         SkillCache.Instance.Save(skillsJson);
 
         throwSkills(SkillCache.Instance.GetCache());
     }
 
-    private void checkLastDistanceAndThrow(double lastLat, double lastLon, string skillsJson)
+    private void saveLastLocation()
     {
-        var lat = Input.location.lastData.latitude;
-        var lon = Input.location.lastData.longitude;
-        var dist = GM.distFrom(lastLat, lastLon, lat, lon);
+        PlayerPrefs.SetString("last_lat", Input.location.lastData.latitude.ToString());
+        PlayerPrefs.SetString("last_lon", Input.location.lastData.longitude.ToString());
+    }
+
+    private void checkLastDistanceAndThrow(string skillsJson)
+    {
+        var dist = lastDistance();
         var cache = SkillCache.Instance.GetCache();
-        if (dist > 500 || cache.skills.Count <= 0)
+
+        if (dist > 25 || cache.skills.Count <= 0)
         {
             saveToCacheAndThrow(skillsJson);
-        } else
+        }
+        else
         {
             throwSkills(cache);
         }
+    }
+
+    private double lastDistance()
+    {
+        Double savedLat = -1;
+        Double savedLon = -1;
+        double.TryParse(PlayerPrefs.GetString("last_lat", ""), out savedLat);
+        double.TryParse(PlayerPrefs.GetString("last_lon", ""), out savedLon);
+
+        if (savedLat == -1 || savedLon == -1)
+        {
+            return -1;
+        }
+
+        var lat = Input.location.lastData.latitude;
+        var lon = Input.location.lastData.longitude;
+        var dist = GM.distFrom(savedLat, savedLon, lat, lon);
+        return dist;
     }
 
     private void throwSkills(SkillCacheContainer skills)
@@ -102,7 +153,7 @@ public class SkillsManager : MonoBehaviour
 
         for (int i = 0; i < lst.Count; i++)
         {
-            var inside = Random.insideUnitCircle * 80;
+            var inside = UnityEngine.Random.insideUnitCircle * 60;
             var newPos = new Vector3(playerPosition.x + inside.x, 2, playerPosition.z + inside.y);
 
             var skill = lst[i];

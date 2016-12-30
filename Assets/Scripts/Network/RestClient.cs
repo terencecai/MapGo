@@ -126,7 +126,7 @@ public class RestClient : MonoBehaviour
             str = "/quests";
         else
             str = "/quests/me/" + type;
-        return ObservableWWW.GetWWW(URL + str + "?size=20", new Hash() { { "X-Auth-Token", token } });
+        return ObservableWWW.GetWWW(URL + str + "?size=40", new Hash() { { "X-Auth-Token", token } });
     }
 
     public static IObservable<string> createQuest(string token, Hashmap data)
@@ -157,6 +157,12 @@ public class RestClient : MonoBehaviour
     public static IObservable<string> pinQuest(string token, string questId)
     {
         return ObservableWWW.Post(URL + "/quests/me/" + questId, Encoding.UTF8.GetBytes("123"), 
+        new Hash() { { "X-Auth-Token", token } });
+    }
+
+    public static IObservable<string> unpinQuest(string token, string questId)
+    {
+        return ObservableWWW.Post(URL + "/quests/me/unpin/" + questId, Encoding.UTF8.GetBytes("123"), 
         new Hash() { { "X-Auth-Token", token } });
     }
     //------------------------

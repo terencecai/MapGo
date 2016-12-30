@@ -13,6 +13,7 @@ public class Quest {
     public Value value;
     public string title;
     public Answer winner;
+    public bool pinnedByMe;
 
     [Serializable]
     public class Creator {

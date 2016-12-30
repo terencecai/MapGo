@@ -118,7 +118,6 @@ public class LocationManager : MonoBehaviour {
         if(GameObject.Find("Tiles") != null) {
             foreach(Transform child in GameObject.Find("Tiles").transform) {
                 Tile tile = child.GetComponent<Tile>();
-                uiManager.enableWarning("" + location.latitude + " - " + location.longitude);
                 if(tile.Rect.Contains(meters)) {
                     var target = GameObject.CreatePrimitive(PrimitiveType.Cylinder);
                     target.transform.position = (meters - tile.Rect.Center).ToVector3();
