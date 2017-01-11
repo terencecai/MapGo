@@ -46,8 +46,9 @@ public class CreateAnswer : MonoBehaviour {
 	void parseError(Exception e) {
 		string message;
 		try {
-			message = new JSONObject(e.ToString())["message"].str;
-		} catch (Exception) {
+			message = e.ToString().Split(new string[] { "message\":" }, StringSplitOptions.None)[1];
+		} catch (Exception ee) {
+			Debug.Log(ee);
 			message = e.ToString();
 		}
 		showPopup("Error", message);

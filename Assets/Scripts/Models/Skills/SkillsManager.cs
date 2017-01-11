@@ -148,6 +148,8 @@ public class SkillsManager : MonoBehaviour
     private void throwSkills(SkillCacheContainer skills)
     {
         clearPool();
+        if (skills.skills == null || skills.skills.Count <= 0)
+            return;
         var lst = skills.skills.GetRange(0, Mathf.Min(MAX_SKILL_POOL_SIZE, skills.skills.Count));
         var playerPosition = player.transform.position;
 

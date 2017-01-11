@@ -69,17 +69,35 @@ public class TavernManager : MonoBehaviour {
 			return;
 		}
 
+		if (Tavern == null || Tavern.transform == null) {
+			return;
+		}
+
+		if (taverns == null) {
+			taverns = new List<GameObject>();
+		}
+
 		for (int i = 0; i < nearest_taverns.Count; i++)
 		{
 			if (taverns.Count <= i) {
 				taverns.Add(Instantiate(Tavern, Tavern.transform.position, Tavern.transform.rotation));
 			}
 
-			var obj = taverns[i];
+			var obj = getTavernOrNull(i);
 			if (obj == null) {
 				obj = Instantiate(Tavern, Tavern.transform.position, Tavern.transform.rotation);
+				taverns.Add(obj);
 			}
 			showTavern(nearest_taverns[i], obj);
+		}
+	}
+
+	private GameObject getTavernOrNull(int index)
+	{
+		try {
+			return taverns[index];
+		} catch (Exception) {
+			return null;
 		}
 	}
 

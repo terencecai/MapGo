@@ -23,7 +23,8 @@ public class ProfileBehaviour : MonoBehaviour
 
     void Start()
     {
-        if (EditPanel.activeInHierarchy) {
+        if (EditPanel.activeInHierarchy)
+        {
             EditPanel.SetActive(false);
         }
         var i = 0;
@@ -40,7 +41,7 @@ public class ProfileBehaviour : MonoBehaviour
             }
         });
         EditButton.onClick.AddListener(() => EditPanel.SetActive(true));
-        BackButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("CachedDynamicLoader"));        
+        BackButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("CachedDynamicLoader"));
     }
 
     void OnEnable()
@@ -68,12 +69,18 @@ public class ProfileBehaviour : MonoBehaviour
 
     private void fillData(Profile profile)
     {
-        ProfileName.text = profile.nickName;
-        CharType.text = profile.chosenValue.name;
-
-        AutorityBar.fillAmount = profile.values[0].level / 100.0f;
-        CompassionBar.fillAmount = profile.values[1].level / 100.0f;
-        IntelligenceBar.fillAmount = profile.values[2].level / 100.0f;
+        try
+        {
+            ProfileName.text = profile.nickName;
+            CharType.text = profile.chosenValue.name;
+            AutorityBar.fillAmount     = profile.values.Find(x => x.name == "Authority").level / 100.0f;
+            CompassionBar.fillAmount   = profile.values.Find(x => x.name == "Compassion").level / 100.0f;
+            IntelligenceBar.fillAmount = profile.values.Find(x => x.name == "Intelligence").level / 100.0f;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
+        }
     }
 
     // Update is called once per frame
