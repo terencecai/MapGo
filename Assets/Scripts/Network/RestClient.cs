@@ -101,6 +101,13 @@ public class RestClient : MonoBehaviour
                                                { "Content-Type", "application/json" }});
     }
 
+    public static IObservable<WWW> changeValue(string token, string valueId)
+    {
+        var b = Encoding.UTF8.GetBytes("{\"valueId\":" + valueId + "}");
+        return ObservableWWW.PostWWW(URL + "/profile/value?valueId=" + valueId, b,
+                                    new Hash(){{ "X-Auth-Token", token }});
+    }
+
     public static IObservable<string> getProfile(string token)
     {
         return ObservableWWW.Get(URL + "/profile", new Hash() { { "X-Auth-Token", token } });

@@ -7,7 +7,7 @@ using UnityEngine;
 
 namespace MapzenGo.Models.Settings
 {
-    public class RoadFactorySettings: SettingsLayers
+    public class RoadFactorySettings : SettingsLayers
     {
         public RoadSettings DefaultRoad;
         public List<RoadSettings> SettingsRoad;
@@ -26,12 +26,12 @@ namespace MapzenGo.Models.Settings
         public override RoadSettings GetSettingsFor<RoadSettings>(Enum type)
         {
             var f = SettingsRoad.FirstOrDefault(x => x.Type == (RoadType)type);
-            return f as RoadSettings?? DefaultRoad as RoadSettings;
+            return f as RoadSettings ?? DefaultRoad as RoadSettings;
         }
 
         public override bool HasSettingsFor(Enum type)
         {
-            return SettingsRoad.Any(x => x.Type== (RoadType)type);
+            return SettingsRoad.Any(x => x.Type == (RoadType)type);
         }
     }
 

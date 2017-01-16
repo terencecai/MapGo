@@ -17,6 +17,7 @@ public class ProfileBehaviour : MonoBehaviour
     [SerializeField] public Image AutorityBar;
     [SerializeField] public Image CompassionBar;
     [SerializeField] public Image IntelligenceBar;
+    [SerializeField] public Button Logout;
 
     [SerializeField] public GameObject EditPanel;
 
@@ -28,17 +29,10 @@ public class ProfileBehaviour : MonoBehaviour
             EditPanel.SetActive(false);
         }
         var i = 0;
-        ProfileAvatar.onClick.AddListener(() =>
+        Logout.onClick.AddListener(() =>
         {
-            if (i < 4)
-            {
-                i++;
-            }
-            else
-            {
-                PlayerPrefs.DeleteAll();
-                SceneManager.LoadSceneAsync("TestScene");
-            }
+            PlayerPrefs.DeleteAll();
+            SceneManager.LoadSceneAsync("TestScene");
         });
         EditButton.onClick.AddListener(() => EditPanel.SetActive(true));
         BackButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("CachedDynamicLoader"));

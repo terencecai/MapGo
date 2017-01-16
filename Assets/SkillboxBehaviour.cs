@@ -28,7 +28,8 @@ public class SkillboxBehaviour : MonoBehaviour
 
         if (Skills == null || Skills.Count <= 0)
             return;
-
+		
+		Skills = Skills.OrderBy(x => x.skillName).ToList();
         var count = Mathf.Min(Skills.Count, 5);
 
         SkillLevelBehaviour temp;
