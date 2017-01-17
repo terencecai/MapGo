@@ -21,10 +21,7 @@ public class SkillBoxController : MonoBehaviour
     void Start()
     {
         allSkills = ProfileRepository.Instance.LoadProfile().allSkills;
-        for (int i = 0; i < Buttons.Count; i++)
-        {
-            setOnClick(i);
-        }
+        StartCoroutine(loadSkills());
     }
 
     // Update is called once per frame
@@ -51,6 +48,19 @@ public class SkillBoxController : MonoBehaviour
                 Debug.Log(e);
             }
         });
+    }
+
+    System.Collections.IEnumerator loadSkills()
+    {
+        while (ProfileRepository.Instance.LoadProfile().allSkills.Count <= 0) {
+            yield return new WaitForSeconds(0.5f);
+            print("WaitAndPrint " + Time.time);
+        }
+        allSkills = ProfileRepository.Instance.LoadProfile().allSkills;
+        for (int i = 0; i < Buttons.Count; i++)
+        {
+            setOnClick(i);
+        }
     }
 
 }

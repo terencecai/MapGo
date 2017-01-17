@@ -23,6 +23,20 @@ public class ValueSwitch : MonoBehaviour
 		Intelligence.onValueChanged.AddListener(onChange);
     }
 
+    public void SetValue(Value val) 
+    {
+        if (val == null || val.name == "") {
+            setValue(VALUE.Default);
+            return;
+        }
+        switch (val.name) 
+        {
+            case "Authority": Autority.isOn = true; break;
+            case "Compassion" : Compassion.isOn = true; break;
+            case "Intelligence": Intelligence.isOn = true; break;
+        }
+    }
+
     private void onChange(bool val)
     {
         var a = Group.ActiveToggles().FirstOrDefault();
@@ -37,7 +51,7 @@ public class ValueSwitch : MonoBehaviour
     private void setValue(VALUE v)
     {
         var values = ProfileRepository.Instance.LoadProfile().values;
-		var def = ProfileRepository.Instance.LoadProfile().chosenValue.valueId;
+		var def = "clear";
 
 		if (values == null || values.Count <= 0) return;
 

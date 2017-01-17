@@ -104,6 +104,10 @@ public class RestClient : MonoBehaviour
     public static IObservable<WWW> changeValue(string token, string valueId)
     {
         var b = Encoding.UTF8.GetBytes("{\"valueId\":" + valueId + "}");
+        if (valueId.Equals("clear")) {
+            return ObservableWWW.PostWWW(URL + "/profile/value/clear?type=current", b,
+                                    new Hash(){{ "X-Auth-Token", token }});
+        }
         return ObservableWWW.PostWWW(URL + "/profile/value?valueId=" + valueId, b,
                                     new Hash(){{ "X-Auth-Token", token }});
     }

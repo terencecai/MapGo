@@ -12,7 +12,7 @@ using System;
 [Serializable]
 public class Value {
     public string valueId;
-    public string name;
+    public string name = "";
     public int level;
     public int maxLevel;
     public bool chosen;

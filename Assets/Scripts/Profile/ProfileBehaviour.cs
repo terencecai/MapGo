@@ -20,7 +20,7 @@ public class ProfileBehaviour : MonoBehaviour
     [SerializeField] public Button Logout;
 
     [SerializeField] public GameObject EditPanel;
-
+    [SerializeField] public GameObject ValuePanel;
 
     void Start()
     {
@@ -28,7 +28,6 @@ public class ProfileBehaviour : MonoBehaviour
         {
             EditPanel.SetActive(false);
         }
-        var i = 0;
         Logout.onClick.AddListener(() =>
         {
             PlayerPrefs.DeleteAll();
@@ -70,16 +69,11 @@ public class ProfileBehaviour : MonoBehaviour
             AutorityBar.fillAmount     = profile.values.Find(x => x.name == "Authority").level / 100.0f;
             CompassionBar.fillAmount   = profile.values.Find(x => x.name == "Compassion").level / 100.0f;
             IntelligenceBar.fillAmount = profile.values.Find(x => x.name == "Intelligence").level / 100.0f;
+            ValuePanel.GetComponent<ValueSwitch>().SetValue(profile.currentValue);
         }
         catch (Exception e)
         {
             Debug.Log(e);
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-
     }
 }
