@@ -4,6 +4,7 @@ using Hash = System.Collections.Generic.Dictionary<string, string>;
 using System.Text;
 using System;
 using System.Linq;
+using POI;
 public class RestClient : MonoBehaviour
 {
 
@@ -194,5 +195,14 @@ public class RestClient : MonoBehaviour
         var obs = ObservableWWW.PostWWW(URL + "/debug", form);
         obs.Subscribe(x => { }, e => Debug.Log(e));
         return obs;
+    }
+
+    //------------------------
+    //POIs
+    //------------------------
+    public static IObservable<RootObject> findPlace(double lat, double lon)
+    {
+        return ObservableWWW.Get("http://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lon + "&zoom=18&addressdetails=1&extratags=1")
+            .Select(json => JsonUtility.FromJson<RootObject>(json));
     }
 }

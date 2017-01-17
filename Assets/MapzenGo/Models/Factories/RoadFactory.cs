@@ -14,9 +14,11 @@ namespace MapzenGo.Models.Factories
     {
         public override string XmlTag { get { return "roads"; } }
         [SerializeField] protected RoadFactorySettings FactorySettings;
+        private Profile profile;
 
         public override void Start()
         {
+            profile = ProfileRepository.Instance.LoadProfile();
             base.Start();
             Query = (geo) => geo["geometry"]["type"].str == "LineString" || geo["geometry"]["type"].str == "MultiLineString";
         }
@@ -28,7 +30,6 @@ namespace MapzenGo.Models.Factories
                 yield break;
 
             var typeSettings = FactorySettings.GetSettingsFor<RoadSettings>(kind);
-
             if (geo["geometry"]["type"].str == "LineString")
             {
                 var road = new GameObject("road").AddComponent<Road>();
@@ -181,8 +182,30 @@ namespace MapzenGo.Models.Factories
             mesh.SetUVs(0, meshdata.UV);
             mesh.RecalculateNormals();
             go.GetComponent<MeshRenderer>().material = FactorySettings.GetSettingsFor<RoadSettings>(kind).Material;
+            changeMaterialColor(go);
             go.transform.position += Vector3.up * Order;
             go.transform.SetParent(parent, true);
+        }
+
+        private void changeMaterialColor(GameObject go)
+        {
+            if (profile == null || profile.chosenValue == null)
+                return;
+
+            var mat = go.GetComponent<MeshRenderer>().material;
+            Debug.Log(profile.currentValue.name);
+            switch(profile.currentValue.name)
+            {
+                case "Authority": 
+                    mat.color = new Color(199/255f, 226/255f, 73/255f); 
+                    break;
+                case "Intelligence": 
+                    mat.color = Color.magenta; 
+                    break;
+                case "Compassion": 
+                    mat.color = new Color(242/255f, 133/255f, 0); 
+                    break;
+            }
         }
 
         private void CreateMesh(List<Vector3> list, RoadSettings settings, MeshData md)

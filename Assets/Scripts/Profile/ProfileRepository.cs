@@ -1,5 +1,7 @@
 ﻿using System;
 using UnityEngine;
+using UniRx;
+
 public class ProfileRepository  {
 
 	private static ProfileRepository instance;
@@ -58,5 +60,30 @@ public class ProfileRepository  {
 
 	public Profile LoadProfile() {
 		return JsonUtility.FromJson<Profile>(PlayerPrefs.GetString("profile", ""));
+	}
+
+	public void UpdateProfile()
+	{
+		sync(PlayerPrefs.GetString("token", ""));
+	}
+
+	private void sync(string token)
+    {
+        Observable.WhenAll(
+            RestClient.getProfile(token),
+            RestClient.getMySkills(token),
+            RestClient.getAllSkills(token))
+            .Subscribe(
+                update,
+                Debug.Log
+            );
+    }
+
+    private void update(string[] prof)
+    {
+        var profile = JsonUtility.FromJson<Profile>(prof[0]);
+        profile.skills = ApplicationLoadController.convertSkills(prof[1]);
+        profile.allSkills = ApplicationLoadController.convertSkills(prof[2]);
+        ProfileRepository.Instance.SaveProfileJson(profile);
 	}
 }

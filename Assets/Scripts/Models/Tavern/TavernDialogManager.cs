@@ -15,7 +15,7 @@ public class TavernDialogManager : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		MessageText.text = "Are you want to enter \"" + TavernName + "\"?";
+		MessageText.text = "Do you want to enter \"" + TavernName + "\"?";
 	}
 
 	void OnDeclineClick()

@@ -71,10 +71,15 @@ public class ValueSwitch : MonoBehaviour
 
 		RestClient.changeValue(PlayerPrefs.GetString("token", ""), valueId)
 			.Subscribe(
-				res => Debug.Log(res.text ),
+                res => updateProfile(),
 				err => Debug.Log(err)
 			);
 	}
+
+    private void updateProfile()
+    {
+        ProfileRepository.Instance.UpdateProfile();
+    }
 
     private enum VALUE
     {
