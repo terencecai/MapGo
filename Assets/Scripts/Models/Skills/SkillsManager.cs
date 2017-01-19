@@ -87,7 +87,6 @@ public class SkillsManager : MonoBehaviour
     private void skillsUpdates()
     {
         var dist = lastDistance();
-        UIManager.enableWarning("distance: " + dist.ToString());
         if (dist > 50)
         {
             RestClient.requestSkills(PlayerPrefs.GetString("token", ""))
@@ -156,7 +155,7 @@ public class SkillsManager : MonoBehaviour
         for (int i = 0; i < lst.Count; i++)
         {
             var inside = UnityEngine.Random.insideUnitCircle * 60;
-            var newPos = new Vector3(playerPosition.x + inside.x, 2, playerPosition.z + inside.y);
+            var newPos = new Vector3(playerPosition.x + inside.x, 3, playerPosition.z + inside.y);
 
             var skill = lst[i];
             activeSkills.Add(skill);

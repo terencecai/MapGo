@@ -16,5 +16,4 @@ namespace MapzenGo.Models
         public string LanduseKind;
         public int SortKey;
     }
-
 }

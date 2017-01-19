@@ -14,18 +14,18 @@ namespace MapzenGo.Models {
         
         [SerializeField] public float Latitude = 40.752710f;
 
-        [SerializeField] public float Longitude = -73.979307f;
+        [SerializeField] public float Longitude = 39.979307f;
         [SerializeField]
-        public int Range = 2;
+        public int Range = 3;
         [SerializeField]
-        public int Zoom = 16;
+        public int Zoom = 18;
         [SerializeField]
         public float TileSize = 200;
 
         protected readonly string _mapzenUrl = "http://tile.mapzen.com/mapzen/vector/v1/{0}/{1}/{2}/{3}.{4}?api_key={5}";
         [SerializeField]
         protected string _key = "mapzen-C4E6Siz"; //try getting your own key if this doesn't work
-        protected readonly string _mapzenLayers = "roads,buildings";
+        protected readonly string _mapzenLayers = "roads,buildings,pois";
         [SerializeField]
         protected Material MapMaterial;
         protected readonly string _mapzenFormat = "json";

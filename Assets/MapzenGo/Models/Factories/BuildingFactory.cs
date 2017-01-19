@@ -95,7 +95,7 @@ namespace MapzenGo.Models.Factories
             var main = new GameObject("Buildings Layer");
             var finalList = new Dictionary<BuildingType, MeshData>();
             var openList = new Dictionary<BuildingType, MeshData>();
-
+            main.AddComponent<BuildingClickHanlder>().tile = tile;
             foreach (var geo in items.Where(x => Query(x)))
             {
                 var key = geo["properties"]["id"].ToString();
@@ -321,6 +321,7 @@ namespace MapzenGo.Models.Factories
         private void CreateGameObject(BuildingType kind, MeshData data, GameObject main)
         {
             var go = new GameObject(kind + " Buildings");
+            go.AddComponent<BuildingClickHanlder>().tile = main.GetComponent<BuildingClickHanlder>().tile;
             var mesh = go.AddComponent<MeshFilter>().mesh;
             go.AddComponent<MeshRenderer>();
             mesh.vertices = data.Vertices.ToArray();
@@ -330,6 +331,7 @@ namespace MapzenGo.Models.Factories
             go.GetComponent<MeshRenderer>().material = FactorySettings.GetSettingsFor<BuildingSettings>(kind).Material;
             go.transform.position += Vector3.up * Order;
             go.transform.SetParent(main.transform, false);
+            go.AddComponent<BoxCollider>();
         }
     }
 }

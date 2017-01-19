@@ -3,36 +3,42 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace POI
-{
+{   
+    [Serializable]
     public class Address
     {
-        public string house_number { get; set; }
-        public string road { get; set; }
-        public string city_district { get; set; }
-        public string city { get; set; }
-        public string county { get; set; }
-        public string region { get; set; }
-        public string state { get; set; }
-        public string postcode { get; set; }
-        public string country { get; set; }
-        public string country_code { get; set; }
+        public string house_number;
+        public string road;
+        public string city_district;
+        public string city;
+        public string county;
+        public string region;
+        public string state;
+        public string postcode;
+        public string country;
+        public string country_code;
     }
-
+    [Serializable]
     public class Extratags
     {
     }
-
+    [Serializable]
     public class RootObject
     {
-        public string place_id { get; set; }
-        public string licence { get; set; }
-        public string osm_type { get; set; }
-        public string osm_id { get; set; }
-        public string lat { get; set; }
-        public string lon { get; set; }
-        public string display_name { get; set; }
-        public Address address { get; set; }
-        public Extratags extratags { get; set; }
-        public List<string> boundingbox { get; set; }
+        public string place_id;
+        public string licence;
+        public string osm_type;
+        public string osm_id;
+        public string lat;
+        public string lon;
+        public string display_name;
+        public Address address;
+        public Extratags extratags;
+        public List<string> boundingbox;
+
+        public string GetPlaceName()
+        {
+            return display_name.Split(',')[0];
+        }
     }
 }

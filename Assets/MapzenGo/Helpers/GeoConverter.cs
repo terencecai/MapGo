@@ -11,7 +11,7 @@ namespace MapzenGo.Helpers
     //SOURCE: http://stackoverflow.com/questions/12896139/geographic-coordinates-converter
     public static class GM
     {
-        private const int TileSize = 256;
+        private const int TileSize = 200;
         private const int EarthRadius = 6378137;
         private const double InitialResolution = 2 * Math.PI * EarthRadius / TileSize;
         private const double OriginShift = 2 * Math.PI * EarthRadius / 2;
@@ -29,6 +29,15 @@ namespace MapzenGo.Helpers
             p.y = (Math.Log(Math.Tan((90 + lat) * Math.PI / 360)) / (Math.PI / 180));
             p.y = (p.y * OriginShift / 180);
             return new Vector2d(p.x, p.y);
+        }
+
+        public static Vector2d MetersToLatLon(Vector2d meters)
+        {
+
+            var latitude = (1.5707963267948966 - (2.0 * Math.Atan(Math.Exp((-1.0 * meters.y) / EarthRadius)))) * (180 / Math.PI);
+            var longitude = ((meters.x / EarthRadius) * 57.295779513082323) - ((Math.Floor((((meters.x / EarthRadius) * 57.295779513082323) + 180.0) / 360.0)) * 360.0);
+
+            return new Vector2d(latitude, longitude);
         }
 
         //Converts pixel coordinates in given zoom level of pyramid to EPSG:900913
@@ -82,13 +91,13 @@ namespace MapzenGo.Helpers
         }
 
         //Returns bounds of the given tile in latutude/longitude using WGS84 datum
-        //public static Rect TileLatLonBounds(Vector2d t, int zoom)
-        //{
+        // public static Rect TileLatLonBounds(Vector2d t, int zoom)
+        // {
         //    var bound = TileBounds(t, zoom);
         //    var min = MetersToLatLon(new Vector2d(bound.xMin, bound.yMin));
         //    var max = MetersToLatLon(new Vector2d(bound.xMax, bound.yMax));
         //    return new Rect(min.x, min.y, Math.Abs(max.x - min.x), Math.Abs(max.y - min.y));
-        //}
+        // }
 
         //Resolution (meters/pixel) for given zoom level (measured at Equator)
         public static double Resolution(int zoom)
@@ -194,7 +203,7 @@ namespace MapzenGo.Helpers
             yOffset = Mathf.Cos(bearing) * s;
         }
 
-        
+
         public static double distFrom(double lat1, double lng1, double lat2, double lng2)
         {
             double earthRadius = 6371.0; // miles (or 6371.0 kilometers)

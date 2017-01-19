@@ -193,7 +193,6 @@ namespace MapzenGo.Models.Factories
                 return;
 
             var mat = go.GetComponent<MeshRenderer>().material;
-            Debug.Log(profile.currentValue.name);
             switch(profile.currentValue.name)
             {
                 case "Authority": 

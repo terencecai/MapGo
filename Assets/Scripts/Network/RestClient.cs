@@ -202,7 +202,8 @@ public class RestClient : MonoBehaviour
     //------------------------
     public static IObservable<RootObject> findPlace(double lat, double lon)
     {
-        return ObservableWWW.Get("http://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat + "&lon=" + lon + "&zoom=18&addressdetails=1&extratags=1")
-            .Select(json => JsonUtility.FromJson<RootObject>(json));
+        var url = "http://nominatim.openstreetmap.org/reverse?format=json&lat=" + lat.ToString() + "&lon=" + lon.ToString() + "&zoom=18&addressdetails=1&extratags=1";
+        return ObservableWWW.Get(url)
+            .Select(json => {return JsonUtility.FromJson<RootObject>(json);});
     }
 }

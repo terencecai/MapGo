@@ -18,7 +18,7 @@ public class SkillDialogManager : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		MessageText.text = "Are you want to pickup: \"" + Skill.skillName + "\"?";
+		MessageText.text = "Do you want to pickup: \"" + Skill.skillName + "\"?";
 	}
 
 	void OnDisable() {

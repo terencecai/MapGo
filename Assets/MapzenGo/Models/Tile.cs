@@ -1,7 +1,11 @@
 ﻿using System;
 using MapzenGo.Helpers.VectorD;
+using MapzenGo.Helpers;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using POI;
 
+using UniRx;
 namespace MapzenGo.Models
 {
     public class Tile : MonoBehaviour
@@ -26,8 +30,38 @@ namespace MapzenGo.Models
                 Destroyed(this, null);
             }
         }
+    }
 
+    public class BuildingClickHanlder : MonoBehaviour
+    {
+        public Tile tile;
 
+        void OnMouseUp()
+        {
+			if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+		
+            if (PlayerPrefs.GetString("navigation", "false").Equals("false"))
+                return;
+            
+            RaycastHit hit;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
+            if (Physics.Raycast(ray, out hit))
+            {
+                var p = new Vector2d(hit.point.x, hit.point.z) + tile.Rect.Center;
+                p = GM.MetersToLatLon(p);
+                Debug.Log(p);
+                RestClient.findPlace(p.x, p.y)
+                    .Subscribe(
+                        x => onS(x),
+                        e => Debug.Log(e)
+                    );
+            }
+        }
+
+        private void onS(RootObject obj)
+        {
+            GameObject.Find("World").GetComponent<UIManager>().enableWarning(obj.GetPlaceName());
+        }
     }
 }
