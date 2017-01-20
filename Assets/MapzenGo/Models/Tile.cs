@@ -38,11 +38,11 @@ namespace MapzenGo.Models
 
         void OnMouseUp()
         {
-			if(EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
-		
+            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+
             if (PlayerPrefs.GetString("navigation", "false").Equals("false"))
                 return;
-            
+
             RaycastHit hit;
             Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
@@ -61,7 +61,15 @@ namespace MapzenGo.Models
 
         private void onS(RootObject obj)
         {
-            GameObject.Find("World").GetComponent<UIManager>().enableWarning(obj.GetPlaceName());
+            string placeName;
+            if (obj == null) return;
+            try { placeName = obj.GetPlaceName(); } 
+            catch (Exception e) 
+            { 
+                placeName = "Failed to fetch location name";
+                RestClient.sendDebug(e.ToString());
+            }
+            GameObject.Find("World").GetComponent<UIManager>().enableWarning(placeName);
         }
     }
 }
