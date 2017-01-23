@@ -30,8 +30,8 @@ namespace POI
         public string licence;
         public string osm_type;
         public string osm_id;
-        public string lat;
-        public string lon;
+        public Double lat;
+        public Double lon;
         public string display_name;
         public Address address;
         public Extratags extratags;

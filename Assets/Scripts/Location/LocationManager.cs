@@ -89,6 +89,8 @@ public class LocationManager : MonoBehaviour {
     }
 
 	void updateLocation() {
+        if (LiveParams.TeleportEnabled)
+            return;
 		if (!Input.location.isEnabledByUser) {
 			StartCoroutine (Start());
 			coroutineStarted = true;
@@ -108,12 +110,12 @@ public class LocationManager : MonoBehaviour {
 		}
 	}
 
-    public LocationInfo GetLastLocation()
+    public Location GetLastLocation()
     {
-        if (PlayerPrefs.GetInt("teleport", 0) == 1)
-            return new LocationInfo();
+        if (LiveParams.TeleportEnabled)
+            return null;
 
-        return Input.location.lastData;
+        return new Location(Input.location.lastData);
 
     }
 

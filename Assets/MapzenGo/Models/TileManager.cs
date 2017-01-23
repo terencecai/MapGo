@@ -40,7 +40,7 @@ namespace MapzenGo.Models {
         private LocationManager locManager;
 
         public virtual void Start() {
-
+            LiveParams.InitFields();
             locManager = GetComponent<LocationManager>();
 
             if(locManager.getStartLocation().latitude != 0) {
@@ -59,8 +59,29 @@ namespace MapzenGo.Models {
 
         public virtual void InitMap() 
         {
-            Latitude = locManager.GetLastLocation().latitude;
-            Longitude = locManager.GetLastLocation().longitude;
+            var location = locManager.GetLastLocation();
+            if (location == null) return;
+            Latitude = (float) location.GetLatitude();
+            Longitude = (float) location.GetLongitude();
+            var v2 = GM.LatLonToMeters(Latitude, Longitude);
+            var tile = GM.MetersToTile(v2, Zoom);
+            TileHost = new GameObject("Tiles").transform;
+            TileHost.SetParent(transform, false);
+
+            Tiles = new Dictionary<Vector2d, Tile>();
+            CenterTms = tile;
+            CenterInMercator = GM.TileBounds(CenterTms, Zoom).Center;
+
+            var rect = GM.TileBounds(CenterTms, Zoom);
+            transform.localScale = Vector3.one * (float) (TileSize / rect.Width);
+
+            LoadTiles(CenterTms, CenterInMercator);
+        }
+
+        public virtual void InitMap(Location loc)
+        {
+            Latitude = (float) loc.GetLatitude();
+            Longitude = (float) loc.GetLongitude();
             var v2 = GM.LatLonToMeters(Latitude, Longitude);
             var tile = GM.MetersToTile(v2, Zoom);
             TileHost = new GameObject("Tiles").transform;

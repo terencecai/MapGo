@@ -40,7 +40,7 @@ namespace MapzenGo.Models
         {
             if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
 
-            if (PlayerPrefs.GetString("navigation", "false").Equals("false"))
+            if (!LiveParams.NavigationEnabled)
                 return;
 
             RaycastHit hit;

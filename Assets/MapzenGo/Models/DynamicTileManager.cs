@@ -37,6 +37,9 @@ namespace MapzenGo.Models
         }
 
         private void UpdateTiles() {
+            if (LiveParams.TeleportEnabled)
+                return;
+
             if(!_centerCollider.Contains(_player.transform.position.ToVector2xz(), true)) {
                 //player movement in TMS tiles
                 var tileDif = GetMovementVector();
@@ -114,6 +117,7 @@ namespace MapzenGo.Models
 
         public void ClearAllTiles() {
             Destroy(GameObject.Find("Tiles"));
+            if (Tiles != null) Tiles.Clear();
             // var rem = new List<Vector2d>();
             // foreach(var key in Tiles.Keys) {
             //     rem.Add(key);

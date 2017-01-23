@@ -3,6 +3,7 @@ using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
 using System.Collections;
+using MapzenGo.Models;
 public class MenuController : MonoBehaviour
 {
 
@@ -12,7 +13,7 @@ public class MenuController : MonoBehaviour
     [SerializeField] public InputField SearchField;
 
     private LocationManager _locationManager;
-    private MapzenGo.Models.TileManager _tileManager;
+    private CachedDynamicTileManager _tileManager;
     void Start()
     {
         ProfileButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("ProfileScene"));
@@ -21,7 +22,7 @@ public class MenuController : MonoBehaviour
 
         var world = GameObject.Find("World");
         _locationManager = world.GetComponent<LocationManager>();
-        _tileManager = world.GetComponent<MapzenGo.Models.TileManager>();
+        _tileManager = world.GetComponent<CachedDynamicTileManager>();
     }
 
     void OnDestroy()
@@ -33,7 +34,7 @@ public class MenuController : MonoBehaviour
 
     private void onNavigationToggled(bool v)
     {
-        PlayerPrefs.SetString("navigation", v.ToString().ToLower());
+        LiveParams.NavigationEnabled = v;
         if (!v)
         {
             GameObject.Find("World").GetComponent<UIManager>().disableWarning();
@@ -42,13 +43,31 @@ public class MenuController : MonoBehaviour
 
     private IEnumerator onSearchToggled(bool v)
     {
-        if (!v) {
-            var anim = SearchField.GetComponent<Animator>();
-            anim.SetBool("Enabled", true);
-            SearchField.GetComponent<SearchController>().DisableResults();
+        if (!v)
+        {
+            disableSearch();
+            if (LiveParams.ComingToRealLocation)
+                refreshMap();
             yield return new WaitForSeconds(0.5f);
         }
         SearchField.gameObject.SetActive(v);
+    }
+
+    private void disableSearch()
+    {
+        var anim = SearchField.GetComponent<Animator>();
+        anim.SetBool("Enabled", true);
+        SearchField.GetComponent<SearchController>().DisableResults();
+        LiveParams.TeleportEnabled = false;
+        LiveParams.ComingToRealLocation = false;
+    }
+
+    private void refreshMap()
+    {
+        if (_tileManager == null)
+            _tileManager = GameObject.Find("World").GetComponent<CachedDynamicTileManager>();
+        _tileManager.ClearAllTiles();
+        _tileManager.InitMap();
     }
 
     // Update is called once per frame

@@ -1,4 +1,8 @@
-﻿
+﻿using System;
+using UnityEngine;
+
+
+[Serializable]
 public class Location{
 
     private double latitude;
@@ -7,6 +11,11 @@ public class Location{
     public Location(double latitude, double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+    }
+
+    public Location(LocationInfo info) {
+        this.latitude = info.latitude;
+        this.longitude = info.longitude;
     }
 
     public void SetLatitude(double latitude) {
