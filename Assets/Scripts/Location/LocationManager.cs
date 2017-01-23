@@ -108,9 +108,15 @@ public class LocationManager : MonoBehaviour {
 		}
 	}
 
-    void Update() {
+    public LocationInfo GetLastLocation()
+    {
+        if (PlayerPrefs.GetInt("teleport", 0) == 1)
+            return new LocationInfo();
+
+        return Input.location.lastData;
 
     }
+
 
     private Vector3 GetPosition(LocationInfo location) {
         Vector3 targetPos = Vector3.zero;

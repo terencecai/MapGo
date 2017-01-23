@@ -206,4 +206,12 @@ public class RestClient : MonoBehaviour
         return ObservableWWW.Get(url)
             .Select(json => {return JsonUtility.FromJson<RootObject>(json);});
     }
+
+    public static IObservable<SearchResponse> findAddress(string query)
+    {
+        var url = "http://nominatim.openstreetmap.org/search?q=" + query + "&format=json&addressdetails=1";
+        var headers = new Hash() {{ "Accept", "application/json" }};
+        return ObservableWWW.Get(url, headers)
+            .Select(json => { Debug.Log(json); return SearchResponse.FromJson(json);});
+    }
 }

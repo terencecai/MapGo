@@ -39,10 +39,6 @@ namespace MapzenGo.Models {
 
         private LocationManager locManager;
 
-        
-
-       
-
         public virtual void Start() {
 
             locManager = GetComponent<LocationManager>();
@@ -63,8 +59,8 @@ namespace MapzenGo.Models {
 
         public virtual void InitMap() 
         {
-            Latitude = Input.location.lastData.latitude;
-            Longitude = Input.location.lastData.longitude;
+            Latitude = locManager.GetLastLocation().latitude;
+            Longitude = locManager.GetLastLocation().longitude;
             var v2 = GM.LatLonToMeters(Latitude, Longitude);
             var tile = GM.MetersToTile(v2, Zoom);
             TileHost = new GameObject("Tiles").transform;

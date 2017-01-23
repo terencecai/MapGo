@@ -22,6 +22,7 @@ namespace POI
     public class Extratags
     {
     }
+
     [Serializable]
     public class RootObject
     {
@@ -39,6 +40,22 @@ namespace POI
         public string GetPlaceName()
         {
             return display_name.Split(',')[0];
+        }
+    }
+
+    [Serializable]
+    public class SearchResponse
+    {
+        public List<RootObject> results = new List<RootObject>();
+
+        public static SearchResponse FromJson(string json)
+        {
+            SearchResponse result;
+            try { result = JsonUtility.FromJson<SearchResponse>("{\"results\": " + json + "}"); }
+            catch (Exception) { result = new SearchResponse(); }
+
+            return result;
+    
         }
     }
 }
