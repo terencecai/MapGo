@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -79,6 +80,9 @@ public class DetailedController : MonoBehaviour {
 		val.text 	  	 = quest.value.name;
 		username.text 	 = quest.creator.nickName;
 		gameObject.SetActive(true);
+
+		try { val.text = val.text + " - " + quest.skills[0].name + " and " + quest.skills[1].name; }
+		catch (Exception) {  }
 	}
 
 	void OnDisable()

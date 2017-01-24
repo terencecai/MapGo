@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 [Serializable]
 public class Quest {
@@ -14,6 +15,7 @@ public class Quest {
     public string title;
     public Answer winner;
     public bool pinnedByMe;
+    public List<QuestSkill> skills;
 
     [Serializable]
     public class Creator {

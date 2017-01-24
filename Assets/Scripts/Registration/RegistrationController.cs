@@ -19,7 +19,7 @@ public class RegistrationController : MonoBehaviour
 	[SerializeField] public Button addPhoto;
 	[SerializeField] public Button backButton;
 
-	private string birthdayPattern = "^(0[1-9]|[12][0-9]|3[01])[. /.](0[1-9]|1[012])[. /.](19|20)\\d\\d$";
+	private string birthdayPattern = "^(0[1-9]|[12][0-9]|3[01])[. /.]([1-9]|1[012])[. /.](19|20)\\d\\d$";
 
 	private PopUp popup;
 	private Validator validator;
@@ -39,8 +39,6 @@ public class RegistrationController : MonoBehaviour
 		popup = PopupWindow.GetComponent<PopUp>();
 		validator = new Validator(showValidationError);
 		setValidation();
-
-//		checkPrefs();
 	}
 
 	private void setListeners()

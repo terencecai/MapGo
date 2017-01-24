@@ -39,3 +39,9 @@ public class SkillHolder
 {
 	public List<Skill> skills;
 }
+
+[Serializable]
+public class QuestSkill
+{
+	public string name;
+}
