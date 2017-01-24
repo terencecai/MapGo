@@ -24,9 +24,17 @@ public class Profile
 
     public double getBirthdayTime()
     {
-        var date = DateTime.ParseExact(birthDay, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
-        return (TimeZoneInfo.ConvertTimeToUtc(date) -
-           new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
+        try
+        {
+            var date = DateTime.ParseExact(birthDay, "dd.MM.yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            return (TimeZoneInfo.ConvertTimeToUtc(date) -
+               new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
+        }catch (Exception)
+        {
+            var date = DateTime.ParseExact(birthDay, "dd.M.yyyy", System.Globalization.CultureInfo.InvariantCulture);
+            return (TimeZoneInfo.ConvertTimeToUtc(date) -
+               new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc)).TotalSeconds;
+        }
     }
 
     public string getBirthdayString()
@@ -36,6 +44,12 @@ public class Profile
             System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
             dtDateTime = dtDateTime.AddSeconds(Double.Parse(birthDay)).ToLocalTime();
             return dtDateTime.ToString("dd.MM.yyyy");
+        }
+        catch (FormatException)
+        {
+            System.DateTime dtDateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, System.DateTimeKind.Utc);
+            dtDateTime = dtDateTime.AddSeconds(Double.Parse(birthDay)).ToLocalTime();
+            return dtDateTime.ToString("dd.M.yyyy");
         }
         catch (Exception)
         {

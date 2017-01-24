@@ -40,13 +40,19 @@ public class RestClient : MonoBehaviour
         s += "\"birthDay\": " + Convert.ToInt64(user.getBirthdayTime()).ToString() + ", ";
         s += "\"chosenValueId\": " + user.chosenValue.valueId + "}";
 
-        var data = Encoding.UTF8.GetBytes(s);
-        // var form = new Hash();
-        // form.Add("nickName", user.nickName);
-        // form.Add("gender", user.gender.ToUpper());
-        // form.Add("birthDay", Convert.ToInt64(user.getBirthdayTime()).ToString());
-        // form.Add("chosenValueId", user.chosenValue.valueId);
+        var oldPass = PlayerPrefs.GetString("password", "");
+        var newPass = user.credentials.GetPassword();
+        Debug.Log(newPass);
+        if (!user.credentials.GetPassword().Equals(oldPass))
+        {
+            var da = new WWWForm();
+            da.AddField("password", user.credentials.GetPassword());
+            ObservableWWW.Post(URL + "/me/change_password", da, new Hash() { { "X-Auth-Token", token } })
+                        .Subscribe(sx => { PlayerPrefs.SetString("password", user.credentials.GetPassword()); }, Debug.Log);
+        }
 
+        var data = Encoding.UTF8.GetBytes(s);
+        
         return ObservableWWW.PostWWW(URL + "/profile", data, new Hash() { { "X-Auth-Token", token } ,
                                                { "Content-Type", "application/json" }});
     }
