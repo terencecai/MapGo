@@ -1,5 +1,5 @@
 {
-    "version":"0.1.9",
+    "version":"0.1.10",
     "plugin": {
 	"version":"1.2.4",
 	"manifest":"Fabric/Manifest",
@@ -11,11 +11,11 @@
 	"kits":[
 	    {
 		"name":"Crashlytics",
-		"version":"1.2.2",
-		"packageUrl":"https://fabric.io/unity-fabric/crashlytics/1.2.2/Crashlytics.unitypackage",
+		"version":"1.2.3",
+		"packageUrl":"https://fabric.io/unity-fabric/crashlytics/1.2.3/Crashlytics.unitypackage",
 		"packageName":"Crashlytics.unitypackage",
 		"manifest":"Fabric/Kits/Crashlytics/Manifest",
-		"releaseNotesUrl":"https://fabric.io/unity-fabric/crashlytics/1.2.2/Crashlytics.releasenotes",
+		"releaseNotesUrl":"https://fabric.io/unity-fabric/crashlytics/1.2.3/Crashlytics.releasenotes",
 		"dependsOn":[
 				"Crashlytics-Android",
 				"Crashlytics-iOS",

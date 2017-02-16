@@ -35,23 +35,32 @@ namespace MapzenGo.Models
     public class BuildingClickHanlder : MonoBehaviour
     {
         public Tile tile;
+        public Vector2 lastMousePos;
+        public IDisposable lastSubscription;
 
         void OnMouseUp()
         {
-            if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
-
+            #if !UNITY_EDITOR
+                if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId)) return;
+                if (Input.touchCount > 0) {
+                    lastMousePos = Input.GetTouch(0).position;
+                }
+            #else
+                lastMousePos = Input.mousePosition;
+            #endif
             if (!LiveParams.NavigationEnabled)
                 return;
-
             RaycastHit hit;
-            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+            if (lastMousePos == null) return;
+
+            Ray ray = Camera.main.ScreenPointToRay(lastMousePos);
 
             if (Physics.Raycast(ray, out hit))
             {
+                if (lastSubscription != null) lastSubscription.Dispose();
                 var p = new Vector2d(hit.point.x, hit.point.z) + tile.Rect.Center;
                 p = GM.MetersToLatLon(p);
-                Debug.Log(p);
-                RestClient.findPlace(p.x, p.y)
+                lastSubscription = RestClient.findPlace(p.x, p.y)
                     .Subscribe(
                         x => onS(x),
                         e => Debug.Log(e)

@@ -74,6 +74,8 @@ public class AnswersManager : MonoBehaviour {
 			visibleAnswers.Add(item);
 			bind(answer, AnswerPrefab.GetComponent<AnswersItemManager>(), winned);
 		}
+
+		Content.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, json.list.Count * 400);
 	}
 
 	private GameObject getAnswerIfExist(int i) {

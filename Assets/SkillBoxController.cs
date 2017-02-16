@@ -54,7 +54,6 @@ public class SkillBoxController : MonoBehaviour
     {
         while (ProfileRepository.Instance.LoadProfile().allSkills.Count <= 0) {
             yield return new WaitForSeconds(0.5f);
-            print("WaitAndPrint " + Time.time);
         }
         allSkills = ProfileRepository.Instance.LoadProfile().allSkills;
         for (int i = 0; i < Buttons.Count; i++)

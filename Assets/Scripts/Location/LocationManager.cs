@@ -44,7 +44,11 @@ public class LocationManager : MonoBehaviour {
 
         // First, check if user has location service enabled
 		while (!Input.location.isEnabledByUser) {
-			uiManager.enableWarning ("GPS is not enabled!");
+            // if (!LiveParams.TeleportEnabled) {
+			//     uiManager.enableWarning ("GPS is not enabled!");
+            // } else {
+            //     uiManager.disableWarning();
+            // }
 			yield return new WaitForSeconds (1);
         }
 

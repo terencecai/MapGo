@@ -65,7 +65,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
                 //If we're further away than .1 unit, move towards the target.
                 //The minimum allowable tolerance varies with the speed of the object and the framerate. 
                 // 2 * tolerance must be >= moveSpeed / framerate or the object will jump right over the stop.
-                var offsetNormal = offset.normalized * speed;
+                var offsetNormal = offset.normalized * speed * 10;
                 //normalize it and account for movement speed.
                
                     Move(offsetNormal * Time.deltaTime, false, false);

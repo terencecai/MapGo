@@ -28,7 +28,10 @@ public class SearchController : MonoBehaviour
             if (s.Length < 3) return;
             s = s.Replace(",", "%2C");
             s = s.Replace(" ", "%20");
+            if (s.EndsWith(";")) return;
+            
             RestClient.findAddress(s)
+            
                 .Subscribe(parseResults,
                 err =>
                 {
@@ -43,6 +46,12 @@ public class SearchController : MonoBehaviour
         setListener();
     }
 
+    void OnAnimFinish()
+    {
+        if (GetComponent<Animator>().GetBool("Enabled"))
+            gameObject.SetActive(false);
+    }
+
     void OnDisable()
     {
         field.text = "";
@@ -53,6 +62,8 @@ public class SearchController : MonoBehaviour
     public void DisableResults()
     {
         ResultPanel.SetActive(false);
+        var anim = GetComponent<Animator>();
+        anim.SetBool("Enabled", true);
     }
 
     private void parseResults(POI.SearchResponse result)
@@ -88,12 +99,8 @@ public class SearchController : MonoBehaviour
         go.GetComponent<Button>().onClick.RemoveAllListeners();
         go.GetComponent<Button>().onClick.AddListener(() =>
         {
-            LiveParams.TeleportEnabled = true;
-            LiveParams.ComingToRealLocation = true;
-            var tileManager = GameObject.Find("World").GetComponent<CachedDynamicTileManager>();
-            tileManager.ClearAllTiles();
-            tileManager.InitMap(new Location(resp.lat, resp.lon));
-            field.text = resp.display_name;
+            GameObject.Find("World").GetComponent<ZoomCam>().StartAnim(resp);
+            field.text = resp.display_name + ";";
             ResultPanel.SetActive(false);
         });
     }

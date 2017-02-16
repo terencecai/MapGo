@@ -1,5 +1,5 @@
 ﻿using UnityEngine;
-
+using MapzenGo.Models;
 public class InitController : MonoBehaviour {
 
 	[SerializeField] public GameObject ChoosePanel;
@@ -7,6 +7,9 @@ public class InitController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		ChoosePanel.SetActive(currentValueIsNull());
+		#if UNITY_EDITOR
+			gameObject.AddComponent<CachedDynamicTileManager>();
+		#endif
 	}
 	
 	// Update is called once per frame

@@ -30,6 +30,9 @@ public class SkillsManager : MonoBehaviour
         }
 
         StartCoroutine(waitForCoords());
+        #if UNITY_EDITOR
+         UpdateSkills();   
+        #endif
     }
 
     private void clearPool()
@@ -150,19 +153,44 @@ public class SkillsManager : MonoBehaviour
         if (skills.skills == null || skills.skills.Count <= 0)
             return;
         var lst = skills.skills.GetRange(0, Mathf.Min(MAX_SKILL_POOL_SIZE, skills.skills.Count));
+        if (player == null)
+        {
+            player = GameObject.Find("ThirdPersonController");
+        }
         var playerPosition = player.transform.position;
 
         for (int i = 0; i < lst.Count; i++)
         {
-            var inside = UnityEngine.Random.insideUnitCircle * 60;
-            var newPos = new Vector3(playerPosition.x + inside.x, 3, playerPosition.z + inside.y);
+            try
+            {
+                var inside = UnityEngine.Random.insideUnitCircle * 60;
+                var newPos = new Vector3(playerPosition.x + inside.x, 3, playerPosition.z + inside.y);
 
-            var skill = lst[i];
-            activeSkills.Add(skill);
-            skillsPool[i].transform.position = newPos;
-            skillsPool[i].SetActive(true);
-            skillsPool[i].GetComponent<SkillBehaviour>().Skill = skill;
-            skillsPool[i].GetComponent<SkillBehaviour>().skillDialog = SkillDialog;
+                var skill = lst[i];
+                activeSkills.Add(skill);
+                skillsPool[i].transform.position = newPos;
+                skillsPool[i].SetActive(true);
+                skillsPool[i].GetComponent<SkillBehaviour>().Skill = skill;
+                skillsPool[i].GetComponent<SkillBehaviour>().skillDialog = SkillDialog;
+                var mat = skillsPool[i].GetComponent<MeshRenderer>().material;
+                switch (skill.valueName)
+                {
+                    case "Authority":
+                        mat.color = new Color(199 / 255f, 226 / 255f, 73 / 255f);
+                        break;
+                    case "Intelligence":
+                        mat.color = Color.magenta;
+                        break;
+                    case "Compassion":
+                        mat.color = new Color(242 / 255f, 133 / 255f, 0);
+                        break;
+                }
+            }
+            catch (Exception e)
+            {
+                RestClient.sendDebug(e.ToString());
+                continue;
+            }
         }
     }
 }

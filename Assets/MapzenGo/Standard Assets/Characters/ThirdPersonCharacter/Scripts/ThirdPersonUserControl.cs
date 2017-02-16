@@ -44,7 +44,7 @@ namespace UnityStandardAssets.Characters.ThirdPerson
             if ((Time.time - doubleClickStart) <= 0.3f)
             {
                 doubleClickStart = -1;
-                this.OnDoubleClick(); 
+                this.OnDoubleClick();
             }
             else
             {
@@ -78,8 +78,8 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private void FixedUpdate()
         {
             // read inputs
-            float h = CrossPlatformInput.CrossPlatformInputManager.GetAxis("Horizontal");
-            float v = CrossPlatformInput.CrossPlatformInputManager.GetAxis("Vertical");
+            float h = CrossPlatformInput.CrossPlatformInputManager.GetAxis("Horizontal1");
+            float v = CrossPlatformInput.CrossPlatformInputManager.GetAxis("Vertical1");
             bool crouch = Input.GetKey(KeyCode.C);
 
             // calculate move direction to pass to character
@@ -100,12 +100,14 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 #endif
             // pass all parameters to the character control script
             //m_Character.MoveTowardsTarget(target);
-
-            m_Character.MoveTowardsTarget(locManager.getDirection());
-
-
-
-
+            if (LiveParams.ComingToRealLocation)
+            {
+                m_Character.Move(m_Move, false, false);
+            }
+            else
+            {
+                m_Character.MoveTowardsTarget(locManager.getDirection());
+            }
         }
     }
 }

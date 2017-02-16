@@ -10,6 +10,9 @@ public class UIManager : MonoBehaviour {
 	[SerializeField]
 	private Image background;
 
+	[SerializeField]
+	public GameObject Joystick;
+
 	private bool enabled = false;
 
     public void enableWarning(string values) {
@@ -25,6 +28,7 @@ public class UIManager : MonoBehaviour {
     }
 
 	public void disableWarning() {
+		if (!enabled) return;
 		enabled = false;
 		background.gameObject.SetActive (false);
 		gps.gameObject.SetActive (false);

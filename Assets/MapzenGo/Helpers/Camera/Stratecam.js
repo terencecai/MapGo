@@ -2,6 +2,7 @@
 
 import UnityEngine.UI;
 import UnityStandardAssets.CrossPlatformInput;
+import UnityEngine.EventSystems;
 // -------------------------- Configuration --------------------------
 public var terrain : Terrain;
 
@@ -150,8 +151,8 @@ private function UpdateRotation() {
 	var deltaAngleV : float = 0.0f;
 	var deltaMousePos : Vector2;
 
-	var h : float = CrossPlatformInputManager.GetAxis("Horizontal");
-	var v : float = CrossPlatformInputManager.GetAxis("Vertical");
+	var h : float = CrossPlatformInputManager.GetAxis("Horizontal1");
+	var v : float = CrossPlatformInputManager.GetAxis("Vertical1");
 	var noMove : boolean = (h == 0.0 && v == 0.0);
 
 //	if (useMouseInput && Input.GetMouseButton(1)) {

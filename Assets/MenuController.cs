@@ -18,7 +18,7 @@ public class MenuController : MonoBehaviour
     {
         ProfileButton.onClick.AddListener(() => SceneManager.LoadSceneAsync("ProfileScene"));
         Navigation.onValueChanged.AddListener(onNavigationToggled);
-        Search.onValueChanged.AddListener(v => StartCoroutine(onSearchToggled(v)));
+        Search.onValueChanged.AddListener(onSearchToggled);
 
         var world = GameObject.Find("World");
         _locationManager = world.GetComponent<LocationManager>();
@@ -41,25 +41,24 @@ public class MenuController : MonoBehaviour
         }
     }
 
-    private IEnumerator onSearchToggled(bool v)
+    private void onSearchToggled(bool v)
     {
         if (!v)
         {
-            disableSearch();
+            LiveParams.TeleportEnabled = false;
             if (LiveParams.ComingToRealLocation)
                 refreshMap();
-            yield return new WaitForSeconds(0.5f);
+
+            disableSearch();
+            return;
         }
         SearchField.gameObject.SetActive(v);
     }
 
     private void disableSearch()
     {
-        var anim = SearchField.GetComponent<Animator>();
-        anim.SetBool("Enabled", true);
         SearchField.GetComponent<SearchController>().DisableResults();
-        LiveParams.TeleportEnabled = false;
-        LiveParams.ComingToRealLocation = false;
+        LiveParams.SetComing(false);
     }
 
     private void refreshMap()

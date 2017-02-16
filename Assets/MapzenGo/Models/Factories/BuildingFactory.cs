@@ -331,7 +331,7 @@ namespace MapzenGo.Models.Factories
             go.GetComponent<MeshRenderer>().material = FactorySettings.GetSettingsFor<BuildingSettings>(kind).Material;
             go.transform.position += Vector3.up * Order;
             go.transform.SetParent(main.transform, false);
-            go.AddComponent<BoxCollider>();
+            go.AddComponent<BoxCollider>().isTrigger = true;
         }
     }
 }

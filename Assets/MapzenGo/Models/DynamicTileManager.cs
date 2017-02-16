@@ -37,8 +37,6 @@ namespace MapzenGo.Models
         }
 
         private void UpdateTiles() {
-            if (LiveParams.TeleportEnabled)
-                return;
 
             if(!_centerCollider.Contains(_player.transform.position.ToVector2xz(), true)) {
                 //player movement in TMS tiles

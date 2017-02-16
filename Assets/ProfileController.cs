@@ -28,7 +28,7 @@ public class ProfileController : MonoBehaviour
 
     private Profile profile;
     private Validator validator;
-    private string birthdayPattern = "^(0[1-9]|[12][0-9]|3[01])[. /.]([1-9]|1[012])[. /.](19|20)\\d\\d$";
+    private string birthdayPattern = "^(0[1-9]|[12][0-9]|3[01])[. /.](0?[1-9]|1[012])[. /.](19|20)\\d\\d$";
 
     void Start()
     {

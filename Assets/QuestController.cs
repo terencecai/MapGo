@@ -92,11 +92,15 @@ public class QuestController : MonoBehaviour {
 			}
 
 			item = Instantiate(QuestItem) as GameObject;
-			item.transform.parent = Content.transform;
+			item.transform.SetParent(Content.transform);
 			item.transform.localScale = scaleVector;
 			shownQuests.Add(item);
 			fillQuestWithData(quest, item.GetComponent<QuestItemController>());
 		}
+
+		var size = Content.GetComponent<RectTransform>().sizeDelta;
+		size = new Vector2(size.x, json.list.Count * 150);
+		Content.GetComponent<RectTransform>().SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, json.list.Count * 150);
 	}
 
 	private void clearQuests() {
