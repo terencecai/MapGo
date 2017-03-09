@@ -63,17 +63,34 @@ public class LoginController : MonoBehaviour {
 		try {
 			string token = new JSONObject (response.text)["accessToken"].str;
 			PlayerPrefs.SetString ("token", token);
-			RestClient.getProfile(token)
-				.Subscribe(
-					x => parseProfile(x),
-					e => parseError(e)
-				);
+			loadProfile(token);
 		} catch (Exception e) {
 			Debug.Log(response.text);
 			showValidationError (e.ToString ());
 		}
 
 	}
+
+	private void loadProfile(string token)
+    {
+        Observable.WhenAll(
+            RestClient.getProfile(token),
+            RestClient.getMySkills(token),
+            RestClient.getAllSkills(token))
+            .Subscribe(
+                x => loadGame(x),
+                e => { Debug.Log(e); parseError(e); }
+            );
+    }
+
+    private void loadGame(string[] prof)
+    {
+        var profile = JsonUtility.FromJson<Profile>(prof[0]);
+        profile.skills = ApplicationLoadController.convertSkills(prof[1]);
+        profile.allSkills = ApplicationLoadController.convertSkills(prof[2]);
+        ProfileRepository.Instance.SaveProfileJson(profile);
+        SceneManager.LoadSceneAsync("CachedDynamicLoader");
+    }
 
 	private void parseProfile(string json) {
 		ProfileRepository.Instance.SaveProfileJson(json);

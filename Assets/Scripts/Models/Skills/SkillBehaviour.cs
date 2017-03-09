@@ -1,4 +1,6 @@
 ﻿using UnityEngine;
+using UnityEngine.EventSystems;
+
 using UniRx;
 public class SkillBehaviour : MonoBehaviour {
 
@@ -19,6 +21,22 @@ public class SkillBehaviour : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		#if UNITY_IOS
+			if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Began) 
+			{
+				if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+					return;
+				RaycastHit hit;
+				Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+				if (Physics.Raycast(ray, out hit))
+				{
+					if (hit.transform.gameObject == this.gameObject)
+					{
+						performClick();
+					}
+				}
+			}
+		#endif
 	}
 
 	void OnCollisionEnter(Collision collision) {
@@ -29,9 +47,17 @@ public class SkillBehaviour : MonoBehaviour {
 	}
 
 	void OnMouseDown() {
+		#if !UNITY_EDITOR
+			return;
+		#endif
+
 		if (checkObject())
 			return;
-			
+		performClick();	
+	}
+
+	private void performClick()
+	{
 		var mangaer = skillDialog.GetComponent<SkillDialogManager>();
 		mangaer.Skill = Skill;
 		mangaer.skillObject = gameObject;

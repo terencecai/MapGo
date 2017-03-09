@@ -7,12 +7,20 @@ public class FlipBehaviour : MonoBehaviour {
 	[SerializeField] public List<Sprite> images;
 
 	private int NextImage = 0;
-	void FlipCallback() {
+	public void FlipCallback() {
 		Debug.Log(NextImage);
 		if (NextImage >= images.Count || NextImage < 0)
 			return;
 
 		GetComponent<Image>().sprite = images[NextImage];
+	}
+
+	public void FlipCallback(int next) {
+		Debug.Log(next);
+		if (next >= images.Count || next < 0)
+			return;
+
+		GetComponent<Image>().sprite = images[next];
 	}
 
 	public void FlipImage(int nextImage) {

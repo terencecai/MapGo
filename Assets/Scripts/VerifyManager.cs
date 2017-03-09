@@ -43,11 +43,7 @@ public class VerifyManager : MonoBehaviour {
 		try {
 			string token = new JSONObject(response.text)["accessToken"].str;
 			PlayerPrefs.SetString ("token", token);
-			RestClient.getProfile(token)
-				.Subscribe(
-					x => parseProfile(x),
-					e => showValidationError(e.ToString())
-				); 
+			loadProfile(token);
 		} catch (Exception e) {
 			GameObject.Find("Loading").GetComponent<LoadingController>().hideLoading();
 			showValidationError(e.ToString());
@@ -70,6 +66,27 @@ public class VerifyManager : MonoBehaviour {
 				x => { showCodeMessage("Verification code have been sent to your email"); },
 				e => { parseError(e); }
 			);
+    }
+
+	private void loadProfile(string token)
+    {
+        Observable.WhenAll(
+            RestClient.getProfile(token),
+            RestClient.getMySkills(token),
+            RestClient.getAllSkills(token))
+            .Subscribe(
+                x => loadGame(x),
+                e => { Debug.Log(e); parseError(e); }
+            );
+    }
+
+    private void loadGame(string[] prof)
+    {
+        var profile = JsonUtility.FromJson<Profile>(prof[0]);
+        profile.skills = ApplicationLoadController.convertSkills(prof[1]);
+        profile.allSkills = ApplicationLoadController.convertSkills(prof[2]);
+        ProfileRepository.Instance.SaveProfileJson(profile);
+        SceneManager.LoadSceneAsync("CachedDynamicLoader");
     }
 				
 	private Credentials getCreds() {

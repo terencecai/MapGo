@@ -9,7 +9,7 @@ public class RestClient : MonoBehaviour
 {
 
     public static string URL = "http://ec2-35-156-153-137.eu-central-1.compute.amazonaws.com:9999";
-    //  public static string URL = "http://192.168.10.170:8888";
+    //  public static string URL = "http://192.168.10.251:8888";
 
     public static IObservable<WWW> login(Credentials credentials)
     {
@@ -219,5 +219,15 @@ public class RestClient : MonoBehaviour
         var headers = new Hash() {{ "Accept", "application/json" }};
         return ObservableWWW.Get(url, headers)
             .Select(json => { Debug.Log(json); return SearchResponse.FromJson(json);});
+    }
+
+    //------------------------
+    //DEPOTS
+    //------------------------
+    public static IObservable<string> createDepot(string token, Depot data)
+    {
+        var d = Encoding.UTF8.GetBytes(JsonUtility.ToJson(data));
+        return ObservableWWW.Post(URL + "/taverns/user", d, 
+            new Hash() { { "X-Auth-Token", token }, { "Content-Type", "application/json" }});
     }
 }

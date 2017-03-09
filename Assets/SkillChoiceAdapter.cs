@@ -6,11 +6,13 @@ using System;
 
 public class SkillChoiceAdapter : MonoBehaviour
 {
-    private static readonly int MAX_CHOSED = 2;
+    [SerializeField] int MAX_CHOSED = 2;
+    [SerializeField] bool HaveConstraint = true;
     [SerializeField] public List<Toggle> boxes;
     [SerializeField] public Text Title;
     [SerializeField] public Button ok;
-	[SerializeField] public GameObject ErrorWindow;
+    [SerializeField] public Button close;
+    [SerializeField] public GameObject ErrorWindow;
     public List<Skill> skills = new List<Skill>();
 
     private List<Toggle> activeBoxes = new List<Toggle>();
@@ -25,17 +27,25 @@ public class SkillChoiceAdapter : MonoBehaviour
         // initSkills();
         ok.onClick.AddListener(() =>
         {
-			List<Skill> chosen = new List<Skill>();
-			activeBoxes.ForEach(x => {
-				chosen.Add(rels[x]);
-			});
-			if (chosen.Count != 2) {
-				showError("Please, choose 2 skills.");
-				return;
-			}
-			callback(chosen);
+            List<Skill> chosen = new List<Skill>();
+            activeBoxes.ForEach(x => chosen.Add(rels[x]));
+            if (HaveConstraint && chosen.Count != 2)
+            {
+                showError("Please, choose 2 skills.");
+                return;
+            }
+            else if (chosen.Count < 1)
+            {
+                showError("You need to choose at least 1 skill");
+                return;
+            }
+            callback(chosen);
             gameObject.SetActive(false);
         });
+        if (close != null)
+        {
+            close.onClick.AddListener(() => gameObject.SetActive(false));
+        }
     }
 
     void OnEnable()
@@ -79,7 +89,7 @@ public class SkillChoiceAdapter : MonoBehaviour
             boxes[i].transform.Find("Label").GetComponent<Text>().text = skills[i].skillName;
         }
     }
-	private void showError(string message)
+    private void showError(string message)
     {
         var p = ErrorWindow.GetComponent<PopUp>();
         p.Title = "Error";

@@ -41,6 +41,11 @@ namespace POI
         {
             return display_name.Split(',')[0];
         }
+
+        public Location GetLocation()
+        {
+            return new Location(lat, lon);
+        }
     }
 
     [Serializable]

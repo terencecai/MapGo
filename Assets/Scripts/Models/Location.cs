@@ -1,12 +1,13 @@
 ﻿using System;
 using UnityEngine;
 
+using MapzenGo.Helpers;
 
 [Serializable]
 public class Location{
 
-    private double latitude;
-    private double longitude;
+    public double latitude;
+    public double longitude;
 
     public Location(double latitude, double longitude) {
         this.latitude = latitude;
@@ -32,5 +33,15 @@ public class Location{
 
     public double GetLatitude() {
         return latitude;
+    }
+
+    public Location toRadians()
+    {
+        return new Location(GM.toRadians(latitude), GM.toRadians(longitude));
+    }
+
+    public Location toDegrees()
+    {
+        return new Location(GM.toDegrees(latitude), GM.toDegrees(longitude));
     }
 }

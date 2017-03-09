@@ -9,8 +9,10 @@ public class TavernManager : MonoBehaviour
 {
 
     [SerializeField] public GameObject Tavern;
+    [SerializeField] public GameObject Depot;
 
     private List<GameObject> taverns = new List<GameObject>();
+    private List<GameObject> depots = new List<GameObject>();
 
     public Tavern activeTavern;
     private SocketManager socketManager;
@@ -31,6 +33,14 @@ public class TavernManager : MonoBehaviour
             );
     }
 
+    public void RequestTaverns(Location location) {
+        RestClient.getTaverns(PlayerPrefs.GetString("token", ""), location.GetLatitude(), location.GetLongitude())
+            .Subscribe(
+                onSuccess,
+                onError
+            );
+    }
+
     private void onSuccess(WWW response)
     {
         Debug.Log("response is : " + response.text);
@@ -38,6 +48,7 @@ public class TavernManager : MonoBehaviour
         if (data != null)
         {
             createTaverns(data.nearest_taverns);
+            createDepots(data.nearest_depots);
         }
         else
         {
@@ -51,23 +62,84 @@ public class TavernManager : MonoBehaviour
         RestClient.sendDebug(e.ToString());
     }
 
-    void TavernLongPolling()
+    private void createDepots(List<Depot> nearest_depots)
     {
-        var data = socketManager.lastDataPacket;
-        RestClient.sendDebug("Diagram recieved: " + JsonUtility.ToJson(data));
-        RestClient.sendDebug("Packet: " + socketManager.jsonPacket);
-        if (socketManager.recievingError != "")
+        if (nearest_depots == null)
         {
-            RestClient.sendDebug(socketManager.recievingError);
-            socketManager.recievingError = "";
+            Debug.Log("nearest_depots is null");
+            return;
         }
 
-        if (data == null || data.nearest_taverns.Count < 1)
+        if (Depot == null || Depot.transform == null)
         {
             return;
         }
 
-        createTaverns(data.nearest_taverns);
+        if (depots == null)
+        {
+            taverns = new List<GameObject>();
+        }
+
+        for (int i = 0; i < nearest_depots.Count; i++)
+        {
+            try
+            {
+                if (depots.Count <= i)
+                {
+                    depots.Add(Instantiate(Depot, Depot.transform.position, Depot.transform.rotation));
+                }
+
+                var obj = getDepotOrNull(i);
+                if (obj == null)
+                {
+                    obj = Instantiate(Depot, Depot.transform.position, Depot.transform.rotation);
+                    depots.Add(obj);
+                }
+                showDepot(nearest_depots[i], obj);
+            }
+            catch (Exception exc)
+            {
+                RestClient.sendDebug(exc.ToString());
+            }
+        }
+    }
+
+    private void showDepot(Depot depot, GameObject obj)
+    {
+        if (obj.activeSelf)
+        {
+            if (obj.GetComponent<DepotBehaviour>().Depot.name != depot.name)
+            {
+                obj.SetActive(false);
+            } else return;
+        }
+        Tile tile;
+        var meters = GM.LatLonToMeters(depot.latitude, depot.longitude);
+        var tiles = GameObject.Find("Tiles");
+        if (tiles != null)
+        {
+            foreach (Transform child in tiles.transform)
+            {
+                tile = child.GetComponent<Tile>();
+                if (tile.Rect.Contains(meters))
+                {
+                    obj.SetActive(true);
+                    obj.transform.SetParent(null);
+                    obj.transform.position = (meters - tile.Rect.Center).ToVector3();
+                    obj.transform.SetParent(tile.transform, false);
+                    obj.GetComponent<DepotBehaviour>().Depot = depot;
+                    RestClient.sendDebug("Depot " + depot.name + " created\n");
+                    break;
+                }
+
+            }
+        }
+    }
+
+    private GameObject getDepotOrNull(int index)
+    {
+        if (index >= depots.Count) return null;
+        else return depots[index];
     }
 
     private void createTaverns(List<Tavern> nearest_taverns)
@@ -114,14 +186,8 @@ public class TavernManager : MonoBehaviour
 
     private GameObject getTavernOrNull(int index)
     {
-        try
-        {
-            return taverns[index];
-        }
-        catch (Exception)
-        {
-            return null;
-        }
+        if (index >= taverns.Count) return null;
+        else return taverns[index];
     }
 
     public void showTavern(Tavern tavern, GameObject tavernGO)

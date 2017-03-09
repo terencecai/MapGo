@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using System;
 
 using MapzenGo.Models;
+using MapzenGo.Helpers;
 using UniRx;
 public class SearchController : MonoBehaviour
 {
@@ -99,6 +100,9 @@ public class SearchController : MonoBehaviour
         go.GetComponent<Button>().onClick.RemoveAllListeners();
         go.GetComponent<Button>().onClick.AddListener(() =>
         {
+            var randomLocation = GM.PointInCircle(resp.GetLocation(), 40);
+            var json = JsonUtility.ToJson(randomLocation);
+            PlayerPrefs.SetString("last_teleport_location", json);
             GameObject.Find("World").GetComponent<ZoomCam>().StartAnim(resp);
             field.text = resp.display_name + ";";
             ResultPanel.SetActive(false);

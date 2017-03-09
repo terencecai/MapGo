@@ -8,14 +8,23 @@ public class SkillBoxController : MonoBehaviour
     [SerializeField] public List<Button> Buttons;
     [SerializeField] public GameObject SkillboxWindow;
 
-    private readonly List<string> Skillboxes = new List<string>() {
-        "Leadership",
-        "Spirituality",
-        "Creativity",
-        "Wisdom",
-        "Empathy",
-        "Communication"
+    private readonly List<int> Skillboxes = new List<int>() {
+        1,
+        3,
+        5,
+        2,
+        4,
+        6
     };
+
+    /**
+4 : Empathy
+5 : Creativity
+6 : Communication
+1 : Leadership1
+2 : Wisdom5
+3 : Spiritualityн
+*/
 
     private List<Skill> allSkills;
     void Start()
@@ -37,10 +46,12 @@ public class SkillBoxController : MonoBehaviour
         {
             try
             {
-                var sk = allSkills.FindAll(s => s.skillboxName == Skillboxes[index]);
+                var sk = allSkills.FindAll(s => s.skillboxId == Skillboxes[index]);
+                if (sk.Count <= 0) return;
+
                 var temp = SkillboxWindow.GetComponent<SkillboxBehaviour>();
                 temp.Skills = sk;
-                temp.Title = Skillboxes[index];
+                temp.Title = sk[0].skillboxName;
                 SkillboxWindow.SetActive(true);
             }
             catch (IndexOutOfRangeException e)

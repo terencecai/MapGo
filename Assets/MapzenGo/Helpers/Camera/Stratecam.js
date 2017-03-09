@@ -163,6 +163,8 @@ private function UpdateRotation() {
 
 	if ((Input.touchCount == 1) && noMove) {
 		if (Input.GetTouch(0).phase == TouchPhase.Moved) {
+			if (EventSystem.current.IsPointerOverGameObject(Input.GetTouch(0).fingerId))
+					return;
 			deltaMousePos = Input.GetTouch(0).deltaPosition;
 			deltaAngleH += deltaMousePos.x * mouseRotationMultiplier;
 			deltaAngleV -= deltaMousePos.y * mouseRotationMultiplier;

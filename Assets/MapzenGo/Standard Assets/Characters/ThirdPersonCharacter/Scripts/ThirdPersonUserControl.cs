@@ -3,6 +3,8 @@ using UnityEngine;
 using UniRx;
 using UniRx.Triggers;
 
+using MapzenGo.Models;
+using MapzenGo.Helpers;
 namespace UnityStandardAssets.Characters.ThirdPerson
 {
     [RequireComponent(typeof(ThirdPersonCharacter))]
@@ -14,9 +16,10 @@ namespace UnityStandardAssets.Characters.ThirdPerson
         private Vector3 m_Move;
         private bool m_Jump;                      // the world-relative desired move direction, calculated from the camForward and user input.
         private LocationManager locManager;
-        private GameObject tavern;
+        private GameObject lastDepot;
 
-        [SerializeField] public GameObject mainTavern;
+        [SerializeField] public GameObject BaseDepot;
+        [SerializeField] public GameObject DepotValueWindow;
 
         private void Start()
         {
@@ -54,13 +57,41 @@ namespace UnityStandardAssets.Characters.ThirdPerson
 
         void OnDoubleClick()
         {
+            DepotValueWindow.SetActive(true);
+            DepotValueWindow.GetComponent<DepotValueBehaviour>().SuccessCallback =
+                () =>
+                {
+                    GameObject.Find("World").GetComponent<TavernManager>()
+                        .RequestTaverns(getCurrent());
+                };
             Debug.Log("Double Clicked!");
+        }
+
+        LocationManager getLocationManager()
+        {
+            if (locManager == null)
+            {
+                locManager = GameObject.Find("World").GetComponent<LocationManager>();
+            }
+            return locManager;
+        }
+
+        private Location getCurrent()
+        {
+            if (LiveParams.ComingToRealLocation)
+                return JsonUtility.FromJson<Location>(PlayerPrefs.GetString("last_teleport_location", ""));
+            else
+                return new Location(Input.location.lastData);
+        }
+
+        private void createDepot()
+        {
             var inside = UnityEngine.Random.insideUnitCircle * 40;
             var newPos = new Vector3(transform.position.x + inside.x, 0, transform.position.z + inside.y);
 
-            tavern = Instantiate(mainTavern, newPos, mainTavern.transform.rotation);
-            tavern.transform.localScale = new Vector3(1f, 1f, 1f);
-            tavern.SetActive(true);
+            lastDepot = Instantiate(BaseDepot, newPos, BaseDepot.transform.rotation);
+            lastDepot.transform.localScale = new Vector3(3f, 3f, 3f);
+            lastDepot.SetActive(true);
         }
 
 

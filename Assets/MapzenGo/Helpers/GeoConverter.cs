@@ -16,6 +16,9 @@ namespace MapzenGo.Helpers
         private const double InitialResolution = 2 * Math.PI * EarthRadius / TileSize;
         private const double OriginShift = 2 * Math.PI * EarthRadius / 2;
 
+        private const double THREE_PI = Math.PI * 3;
+        private const double TWO_PI = Math.PI * 2;
+
         public static Vector2d LatLonToMeters(Vector2d v)
         {
             return LatLonToMeters(v.x, v.y);
@@ -219,9 +222,48 @@ namespace MapzenGo.Helpers
             return Math.Round(dist, 3) * 1000;
         }
 
+        public static Location PointAtDistance(Location inputCoords, double distance)
+        {
+            Location result = new Location(0, 0);
+            var coords = inputCoords.toRadians();
+            var sinLat = Math.Sin(coords.GetLatitude());
+            var cosLat = Math.Cos(coords.GetLongitude());
+            var bearing = UnityEngine.Random.value * 5;
+            var theta = distance / EarthRadius;
+            var sinBearing = Math.Sin(bearing);
+            var cosBearing = Math.Cos(bearing);
+            var sinTheta = Math.Sin(theta);
+            var cosTheta = Math.Cos(theta);
+
+            result.SetLatitude(Math.Asin(sinLat * cosTheta + cosLat * sinTheta * cosBearing));
+            result.SetLongitude(coords.GetLongitude() + Math.Atan2(
+              sinBearing * sinTheta * cosLat,
+              cosTheta - sinLat * Math.Sin(result.GetLatitude())
+            ));
+            result.SetLongitude(((result.GetLongitude() + THREE_PI) % TWO_PI) - Math.PI);
+
+
+            return result.toDegrees();
+        }
+
+        public static Location PointInCircle(Location coords, double distance)
+        {
+            var rnd = UnityEngine.Random.value * 5;
+            var randomDist = Math.Sqrt(rnd) * distance;
+            Location result = null;
+            var d = new System.Random().Next(1, 10);
+            for (int i = 0; i < d; i++) { result = PointAtDistance(coords, randomDist); }
+            return result;
+        }
+
         public static double toRadians(double degree)
         {
             return (Math.PI / 180) * degree;
+        }
+
+        public static double toDegrees(double radian)
+        {
+            return radian / (Math.PI / 180);
         }
 
     }
